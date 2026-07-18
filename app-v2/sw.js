@@ -1,7 +1,7 @@
 // Service worker: оболочка приложения работает офлайн,
 // аудио кэшируется отдельно при первом прослушивании (см. app.js → cacheTrack).
 
-const SHELL_CACHE = 'av-shell-v8'; // v8: «Тихая ночь» стала видео-сублиминалом
+const SHELL_CACHE = 'av-shell-v9'; // v9: кнопка установки + запрет перекраски темы (color-scheme)
 const AUDIO_CACHE = 'av-audio-v1';
 
 const SHELL = [

@@ -640,6 +640,56 @@ function resetProgress(skipConfirm = false) {
   toast('Прогресс сброшен');
 }
 
+/* ---------- Установка приложения (PWA) ---------- */
+
+// Chrome и совместимые браузеры отдают событие установки — ловим его,
+// чтобы показать свою кнопку «Установить приложение» (одно касание).
+let installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  render();
+});
+
+function isInstalled() {
+  return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+}
+
+async function installApp() {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  const choice = await installPrompt.userChoice;
+  if (choice.outcome === 'accepted') {
+    installPrompt = null;
+    toast('Приложение устанавливается — иконка появится на главном экране');
+    render();
+  }
+}
+
+// Карточка установки: кнопка (если браузер умеет), иначе короткая инструкция.
+function installCard() {
+  if (isInstalled()) return '';
+  if (installPrompt) {
+    return `
+      <div class="card soft">
+        <p class="dim small">Поставь приложение на телефон: иконка на главном экране, запуск в одно касание.</p>
+        <button class="btn" onclick="installApp()">Установить приложение</button>
+      </div>`;
+  }
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  if (ios) {
+    return `
+      <div class="card soft">
+        <p class="dim small">Установить на iPhone: внизу Safari нажми «Поделиться» (квадрат со стрелкой) → «На экран “Домой”».</p>
+      </div>`;
+  }
+  return `
+    <div class="card soft">
+      <p class="dim small">Чтобы установить приложение, открой этот адрес в браузере Chrome — там появится кнопка установки. Или в меню браузера выбери «Добавить на главный экран».</p>
+    </div>`;
+}
+
 /* ---------- Экраны ---------- */
 
 let screen = 'today';
@@ -768,7 +818,8 @@ function renderToday() {
       ${s > 0 ? `<p class="streak"><b>${s}</b> ${plural(s, 'день подряд', 'дня подряд', 'дней подряд')}</p>` : ''}
     </div>
     <p class="dim small" style="margin-top:20px">Из твоего набора прослушано: ${doneCount} из ${recs.length}. Порядок свободный — выбрать другую практику можно в «Программе».</p>
-    ${lvl === 'my' ? `<div class="card soft"><p class="dim small">В библиотеке ждут ещё практики. Тариф «${esc(PRICING.full.title)}» открывает всё сразу.</p><button class="btn ghost" onclick="go('library')">Посмотреть библиотеку</button></div>` : ''}`;
+    ${lvl === 'my' ? `<div class="card soft"><p class="dim small">В библиотеке ждут ещё практики. Тариф «${esc(PRICING.full.title)}» открывает всё сразу.</p><button class="btn ghost" onclick="go('library')">Посмотреть библиотеку</button></div>` : ''}
+    ${installCard()}`;
 }
 
 function plural(n, one, few, many) {
@@ -832,6 +883,7 @@ function renderAccess() {
       <p class="fomo" style="margin-top:18px">🔥 ${esc(FOMO.launch)}</p>
       <a class="btn ghost" href="${BUY_URLS.tariffs}">Выбрать тариф и купить</a>`
     }
+    ${installCard()}
     <hr class="divider" />
     <p class="dim small">Вопросы и возврат — напиши нам, отвечает живой человек. Гарантия возврата 7 дней.</p>
     <p class="dim small" style="margin-top:14px">Это практики для спокойствия и сна. Они не заменяют врача и не лечат болезни.</p>`;
