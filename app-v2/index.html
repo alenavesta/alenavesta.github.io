@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d1420" />
+  <meta name="description" content="Спокойный сон: аудио-практики на 7 вечеров и 21 день. Включи перед сном — дальше всё само." />
+  <title>alenavesta · Спокойный сон</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="screen" aria-live="polite"></main>
+
+  <div id="player" role="dialog" aria-label="Плеер">
+    <button class="player-close" aria-label="Свернуть плеер">← назад</button>
+    <video id="player-video" playsinline preload="metadata"></video>
+    <div class="halo-wrap">
+      <div class="halo"></div>
+      <button class="play-big" id="player-toggle" aria-label="Пауза или продолжить">❚❚</button>
+    </div>
+    <h2></h2>
+    <div class="player-time">0:00</div>
+    <div class="player-bar"><i></i></div>
+    <button class="player-repeat" id="player-repeat" aria-pressed="false" aria-label="Повторять трек по кругу">↻ Повтор</button>
+    <p class="hint">Можно выключить экран — звук продолжит играть. Просто лежи и слушай.</p>
+    <p class="hint hint-video">Можно выключить экран — звук продолжит играть. Включи повтор, чтобы ролик шёл по кругу.</p>
+  </div>
+
+  <nav aria-label="Разделы">
+    <button data-screen="today" class="active"><span class="ico">☾</span>Сегодня</button>
+    <button data-screen="program"><span class="ico">◐</span>Программа</button>
+    <button data-screen="library"><span class="ico">♪</span>Библиотека</button>
+    <button data-screen="access"><span class="ico">✦</span>Доступ</button>
+  </nav>
+
+  <div id="modal" role="dialog" aria-modal="true" aria-label="Открыть доступ">
+    <div class="modal-card">
+      <button id="modal-close" class="modal-close" aria-label="Закрыть">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" role="status"></div>
+
+  <script src="data.js"></script>
+  <script src="quiz-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

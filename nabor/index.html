@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Практики Алёны Весты — наборы медитаций от 490 ₽</title>
+<meta name="description" content="Аудио-практики, которые переписывают корневое убеждение под симптомом. Психология, а не магия. Наборы от 490 ₽.">
+<style>
+  :root {
+    --bg: #0d1420;
+    --surface: rgba(19, 28, 43, 0.93);
+    --surface-2: #182335;
+    --line: #223048;
+    --ink: #f0e7da;
+    --ink-dim: #9ba4b3;
+    --ink-faint: #67728a;
+    --amber: #d9a868;
+    --amber-deep: #b07f43;
+    --amber-glow: rgba(217, 168, 104, 0.16);
+    --radius: 20px;
+    --font-display: Georgia, 'Times New Roman', serif;
+    --font-body: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(rgba(13, 20, 32, 0.55), rgba(13, 20, 32, 0.55)),
+      var(--bg) url('bg.svg') center / cover no-repeat;
+  }
+
+  .col {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 22px;
+  }
+
+  section { padding: 72px 0 0; }
+  section:last-of-type { padding-bottom: 40px; }
+
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+  }
+  h1 { font-size: 34px; }
+  h2 { font-size: 26px; margin-bottom: 22px; }
+
+  .eyebrow {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+    backdrop-filter: blur(8px);
+  }
+  .card p { margin-bottom: 16px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .dim { color: var(--ink-dim); }
+  .small { font-size: 14.5px; }
+
+  .btn {
+    display: inline-block;
+    background: var(--amber);
+    color: #1a1408;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 600;
+    padding: 17px 28px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .btn:hover { background: #e4b87c; }
+  .btn.wide { display: block; width: 100%; }
+
+  /* ---- хиро ---- */
+  .hero {
+    text-align: center;
+    padding-top: 48px;
+  }
+  .hero .logo {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 50px 14px var(--amber-glow);
+  }
+  .hero .logo img { width: 100%; height: 100%; border-radius: 50%; display: block; }
+  .hero p.sub { margin: 18px 0 28px; color: var(--ink-dim); }
+  .hero .note { margin-top: 12px; font-size: 13.5px; color: var(--ink-faint); }
+
+  /* ---- метод ---- */
+  .step { display: flex; gap: 16px; margin-bottom: 22px; }
+  .step .num {
+    flex: 0 0 40px;
+    width: 40px; height: 40px;
+    border: 1px solid var(--amber-deep);
+    border-radius: 50%;
+    color: var(--amber);
+    font-family: var(--font-display);
+    font-size: 19px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .step p { color: var(--ink-dim); }
+
+  .shield {
+    background: var(--amber-glow);
+    border-left: 2px solid var(--amber);
+    border-radius: 0 14px 14px 0;
+    padding: 14px 16px;
+    margin-top: 8px;
+    color: var(--ink);
+  }
+
+  /* ---- состав ---- */
+  .sostav { display: none; }
+  .sostav.active { display: block; }
+  .track {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .track .name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--amber);
+  }
+  .track .type {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 2px 0 8px;
+  }
+  .track p { color: var(--ink-dim); font-size: 15.5px; }
+  .sostav .more { margin-top: 6px; color: var(--ink-dim); font-size: 15.5px; }
+  .sostav-note, .sostav-intro { color: var(--ink-dim); margin-bottom: 20px; }
+  .sostav-footer { margin-top: 18px; color: var(--ink-dim); font-size: 15px; }
+
+  /* ---- Алёна ---- */
+  .alena h2 { color: var(--amber); font-size: 24px; }
+
+  /* ---- тарифы ---- */
+  .plans { display: grid; gap: 18px; margin-top: 6px; }
+  @media (min-width: 720px) {
+    .plans { grid-template-columns: 1fr 1fr; }
+    .col.wide-plans { max-width: 860px; }
+  }
+  .plan {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .plan.featured { border-color: var(--amber); }
+  .plan .badge {
+    position: absolute;
+    top: -12px; right: 18px;
+    background: var(--amber);
+    color: #1a1408;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .plan .plan-name { font-family: var(--font-display); font-size: 21px; }
+  .plan .price {
+    font-family: var(--font-display);
+    font-size: 38px;
+    color: var(--amber);
+    margin: 8px 0 16px;
+  }
+  .plan ul { list-style: none; margin-bottom: 22px; flex: 1; }
+  .plan li {
+    padding: 7px 0 7px 26px;
+    position: relative;
+    color: var(--ink-dim);
+    font-size: 15.5px;
+  }
+  .plan li::before {
+    content: '☾';
+    position: absolute;
+    left: 2px;
+    color: var(--amber-deep);
+  }
+  .anchor-line { margin-top: 20px; color: var(--ink-faint); font-size: 14.5px; text-align: center; }
+
+  /* ---- гарантия ---- */
+  .guarantee {
+    background: var(--amber-glow);
+    border-left: 2px solid var(--amber);
+    border-radius: 0 14px 14px 0;
+    padding: 20px 22px;
+  }
+  .guarantee p { margin-bottom: 10px; }
+  .guarantee .small { margin-bottom: 0; color: var(--ink-dim); }
+
+  /* ---- FAQ ---- */
+  details {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin-bottom: 12px;
+    padding: 0 18px;
+  }
+  summary {
+    cursor: pointer;
+    padding: 16px 0;
+    font-weight: 600;
+    list-style: none;
+    position: relative;
+    padding-right: 28px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '+';
+    position: absolute;
+    right: 2px; top: 14px;
+    color: var(--amber);
+    font-size: 20px;
+  }
+  details[open] summary::after { content: '−'; }
+  details .answer { padding: 0 0 16px; color: var(--ink-dim); }
+
+  /* ---- финал ---- */
+  .final { text-align: center; }
+  .final p { margin: 16px 0 26px; color: var(--ink-dim); }
+  .final .alt { display: block; margin-top: 14px; color: var(--ink-dim); text-decoration: underline; font-size: 15px; }
+
+  footer {
+    margin-top: 56px;
+    border-top: 1px solid var(--line);
+    padding: 24px 0 36px;
+    color: var(--ink-faint);
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  /* ---- появление при скролле ---- */
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease, transform 0.45s ease; }
+  .reveal.shown { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    section { padding-top: 48px; }
+    .plan .price { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Экран 1: хиро -->
+<section class="hero">
+  <div class="col">
+    <div class="logo"><img src="logo.svg" alt="Алёна Веста"></div>
+    <div class="eyebrow" id="hero-eyebrow">Практики Алёны Весты</div>
+    <h1 id="hero-h1">Перепиши убеждение, которое мешает тебе спать, любить и зарабатывать</h1>
+    <p class="sub" id="hero-sub">Под каждым «не получается годами» лежит убеждение в подсознании. Короткие аудио-практики переписывают его за 2–3 недели, по 10 минут в день. Психология, а не магия.</p>
+    <a class="btn" href="#tarify">Показать мой набор</a>
+    <div class="note">Наборы от 490 ₽ · доступ навсегда · возврат 7 дней</div>
+  </div>
+</section>
+
+<!-- Экран 2: развилка рынка -->
+<section class="reveal">
+  <div class="col">
+    <h2>Почему то, что ты пробовала, не сработало</h2>
+    <div class="card">
+      <p>Рынок предлагает два пути. Первый: «магия» за десятки тысяч, где тебе обещают чудо, говорят про энергии и не дают метода. Второй: обезличенные медитации «на всё» из приложений и ютуба, где приятный голос успокаивает на вечер, а утром всё по-старому.</p>
+      <p>Итог одинаковый: ты заплатила или потратила время, ничего не изменилось, а виноватой осталась ты. «Наверное, я неправильно медитировала».</p>
+      <p>Есть третий путь: работать не с симптомом, а с убеждением под ним. Ты уже видела его в результате теста. Симптом возвращается, пока убеждение на месте. Когда убеждение переписано, симптому не на чем держаться.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Экран 3: метод -->
+<section class="reveal">
+  <div class="col">
+    <h2>Метод корневого убеждения. Как это работает</h2>
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h3>Причина найдена</h3>
+        <p>Под симптомом лежит корневое убеждение: запись в подсознании, которая управляет тобой автоматически. Твою запись тест уже показал. Набор практик собран точно под неё.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h3>Переписываем</h3>
+        <p>В расслабленном состоянии подсознание открыто. Медитация мягко подводит к этому состоянию, и новая установка ложится на место старой. Ничего уметь не нужно: включила перед сном, практика работает, пока ты лежишь.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h3>Закрепляем</h3>
+        <p>10 минут в день, 2–3 недели. Новая запись приживается, старая перестаёт управлять. К медитациям в наборе идут сублиминалы: тихие фоновые треки, которые поддерживают то, что заложила медитация.</p>
+      </div>
+    </div>
+    <div class="shield">Без ритуалов, свечей и «энергий». Причина и следствие: что записано в подсознании, то и происходит в жизни. Это психология, просто работает она глубже разговоров.</div>
+  </div>
+</section>
+
+<!-- Экран 4: состав -->
+<section class="reveal">
+  <div class="col">
+    <h2 id="sostav-h2">Что внутри твоего набора</h2>
+    <p class="sostav-intro">Каждый трек бьёт в свою часть убеждения. Слушать по готовой программе: что и в какой день, решать ничего не нужно.</p>
+    <p class="sostav-note" id="sostav-note" hidden>Для примера — состав темы «Сон». В полном доступе все четыре темы: сон, здоровье, отношения, деньги.</p>
+
+    <div class="sostav" data-theme="son">
+      <div class="track"><div class="name">«Уснуть за 10 минут»</div><div class="type">Медитация</div><p>Быстрая практика на вечер: включи лёжа в кровати, дальше всё само.</p></div>
+      <div class="track"><div class="name">«Отпустить день»</div><div class="type">Медитация</div><p>Ставит точку в дне: плечи опускаются, голова понимает, что рабочий день закрыт.</p></div>
+      <div class="track"><div class="name">«Тихий ум»</div><div class="type">Медитация</div><p>Учит замечать мысль и не идти за ней. Круги короче, между ними тишина, и ты соскальзываешь в сон.</p></div>
+      <div class="track"><div class="name">«Глубокий сон»</div><div class="type">Медитация</div><p>Мягкое ведение по телу отпускает зажатые за день плечи, челюсть, спину.</p></div>
+      <div class="track"><div class="name">«Тихая ночь»</div><div class="type">Сублиминал</div><p>Тихий фон на ночь: поддерживает то, что заложила медитация, пока ты спишь.</p></div>
+      <p class="more">В полном доступе также: дневные практики от тревоги, перезагрузка среди дня, возвращение покоя.</p>
+    </div>
+
+    <div class="sostav" data-theme="zdorovie">
+      <div class="track"><div class="name">«Отпустить обиды»</div><div class="type">Медитация</div><p>Старые обиды тело носит как груз: в зажимах, в усталости. Практика помогает поставить груз на землю.</p></div>
+      <div class="track"><div class="name">«Принять своё тело»</div><div class="type">Медитация</div><p>Заканчивает войну с зеркалом. Тело слышит, когда ты перестаёшь быть им недовольна, и отвечает тем же.</p></div>
+      <div class="track"><div class="name">«Снять тревогу и волнение»</div><div class="type">Медитация</div><p>Выключает внутреннюю пружину за 10 минут, не дожидаясь вечера.</p></div>
+      <div class="track"><div class="name">«Отпустить рабочий день»</div><div class="type">Медитация</div><p>Для вечеров, когда напряжение не выключается вместе с ноутбуком.</p></div>
+      <div class="track"><div class="name">«Спокойный фон»</div><div class="type">Сублиминал</div><p>Тихие настройки под музыкой: включаешь фоном, пока занимаешься делами.</p></div>
+      <p class="more">В полном доступе также: работа с навязчивыми мыслями, стройность без войны с собой, свобода от вредных привычек.</p>
+    </div>
+
+    <div class="sostav" data-theme="otnosheniya">
+      <div class="track"><div class="name">«Проработка с мамой»</div><div class="type">Медитация</div><p>Отношения с мамой задают то, как ты относишься к себе внутри. Мягкая практика, без раскапывания травм.</p></div>
+      <div class="track"><div class="name">«Проработка с папой»</div><div class="type">Медитация</div><p>Отношения с папой задают то, как ты держишься во внешнем мире: границы, опору, право просить.</p></div>
+      <div class="track"><div class="name">«Сила рода»</div><div class="type">Медитация</div><p>Возвращает ощущение, что за спиной опора, а не долг.</p></div>
+      <div class="track"><div class="name">«Простить себя»</div><div class="type">Медитация</div><p>Снимает привычку брать вину за каждый конфликт и мерить себя строже всех.</p></div>
+      <div class="track"><div class="name">«Я достойна любви»</div><div class="type">Сублиминал</div><p>Тихие настройки самоценности под музыкой, фоном.</p></div>
+      <p class="more">В полном доступе также: принятие своих комплексов, уверенность в себе, перепрошивка детских установок.</p>
+    </div>
+
+    <div class="sostav" data-theme="dengi">
+      <div class="track"><div class="name">«Разрешить себе больше»</div><div class="type">Медитация</div><p>Мягко раздвигает внутреннюю планку: сколько тебе можно хотеть и брать.</p></div>
+      <div class="track"><div class="name">«Деньги без вины»</div><div class="type">Медитация</div><p>Убирает сжатие при мысли о цене, прибавке и «попросить лишнего».</p></div>
+      <div class="track"><div class="name">«Сила и уверенность»</div><div class="type">Медитация</div><p>Опора внутри, из которой спокойно называешь полную цену.</p></div>
+      <div class="track"><div class="name">«Новые денежные привычки»</div><div class="type">Сублиминал</div><p>Тихие настройки под музыкой: считать, откладывать, давать деньгам внимание.</p></div>
+      <div class="track"><div class="name">«Фокус на целях»</div><div class="type">Сублиминал</div><p>Держит внимание на том, куда ты идёшь, вместо «потом разберусь».</p></div>
+      <p class="more">В полном доступе также: уверенная карьера, работа с самооценкой, свобода от негативных мыслей.</p>
+    </div>
+
+    <p class="sostav-footer">Треки записаны голосом Алёны. Слушать можно с телефона, ничего устанавливать не нужно.</p>
+  </div>
+</section>
+
+<!-- Экран 5: Алёна -->
+<section class="reveal alena">
+  <div class="col">
+    <div class="eyebrow">Кто ведёт практики</div>
+    <h2>«Я не пришла в психологию через учебник. Я пришла через боль»</h2>
+    <div class="card">
+      <p>Я мама двоих детей, жена и обычная женщина, которая много лет носила всё в себе. Не любила смотреть в зеркало. Срывалась на детей. Боялась сказать своё мужу. Читала книги по психологии, слушала марафоны, пыталась думать позитивно, и всё это работало пару дней.</p>
+      <p>Изменилось всё, когда я перестала бороться с симптомами и нашла то, что под ними: отпечатки в подсознании, которые управляют автоматически. С 2022 года я в непрерывном обучении ведической психологии и владею десятком техник работы с подсознанием.</p>
+      <p>Что изменилось у меня самой: минус 25 кг без диет и насилия над собой. Освобождение от обид на родителей, которые я несла годами. Тёплые отношения в семье. Я смотрю в зеркало без критики и без стыда.</p>
+      <p>Эти практики я записала своим голосом, по тем же техникам, которые прошла на себе. Я не обещаю чудес. Я обещаю честность, бережность и инструменты.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Экран 6: тарифы -->
+<section class="reveal" id="tarify">
+  <div class="col wide-plans">
+    <div class="col" style="padding:0">
+      <h2>Выбери свой формат</h2>
+    </div>
+    <div class="plans">
+      <div class="plan" id="plan-my">
+        <div class="plan-name">Мой набор</div>
+        <div class="price"><s style="color:#67728a;font-size:20px">990 ₽</s> 490 ₽</div>
+        <ul>
+          <li id="plan1-theme">5 практик, подобранных тестом под твоё корневое убеждение</li>
+          <li>Медитации и сублиминал по твоей теме</li>
+          <li>Слушать в приложении в любом порядке, отметки прогресса</li>
+          <li>Доступ навсегда, слушать с телефона</li>
+        </ul>
+        <a class="btn wide" id="btn-500" href="#">Получить набор за 490 ₽</a>
+      </div>
+      <div class="plan featured" id="plan-full">
+        <div class="badge">Выгоднее</div>
+        <div class="plan-name">Вся библиотека</div>
+        <div class="price"><s style="color:#67728a;font-size:20px">2990 ₽</s> 1490 ₽</div>
+        <ul>
+          <li>Твой набор из теста + все остальные практики</li>
+          <li>Все медитации и сублиминалы, включая будущие обновления</li>
+          <li>Слушать в приложении в любом порядке, отметки прогресса</li>
+          <li>Доступ навсегда, слушать с телефона</li>
+        </ul>
+        <a class="btn wide" id="btn-1500" href="#">Получить всё за 1490 ₽</a>
+      </div>
+    </div>
+    <p class="anchor-line">🔥 Это цена запуска для первых покупателей — после набора первой группы цена вырастет. 🎁 Бонус за покупку сегодня: гайд «Режим сна» — подробно, как и почему работает сон, когда психика восстанавливается лучше всего и как высыпаться при любом графике.</p>
+    <p class="anchor-line">Для сравнения: подписка на приложение медитаций стоит 2190 ₽ в год и заканчивается. Здесь один платёж, и практики остаются у тебя.</p>
+  </div>
+</section>
+
+<!-- Экран 7: гарантия -->
+<section class="reveal">
+  <div class="col">
+    <h2>Ты ничем не рискуешь</h2>
+    <div class="guarantee">
+      <p>Слушаешь 7 вечеров. Не стало спокойнее? Напиши одно сообщение, и мы вернём оплату. Без вопросов, без анкет и без «а вы точно правильно слушали».</p>
+      <p class="small">Возврат действует 7 дней с момента покупки на оба тарифа.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Экран 8: FAQ -->
+<section class="reveal">
+  <div class="col">
+    <h2>Частые вопросы</h2>
+    <details>
+      <summary>«Я уже пробовала медитации. Не помогло»</summary>
+      <div class="answer">Обычные медитации успокаивают симптом: полежала, подышала, стало легче на вечер. Здесь другая работа: практики переписывают убеждение, из-за которого симптом возвращается. А если через 7 дней не почувствуешь разницы — вернём деньги одним сообщением.</div>
+    </details>
+    <details>
+      <summary>«Это эзотерика?»</summary>
+      <div class="answer">Нет. Никаких свечей, ритуалов и «энергий». Причина и следствие: что записано в подсознании, то и повторяется в жизни. Меняем запись, меняется результат. Психология, а не магия.</div>
+    </details>
+    <details>
+      <summary>«У меня нет времени на практики»</summary>
+      <div class="answer">10 минут в день, лёжа, перед сном. Ты и так лежишь и крутишь мысли. Практика занимает то же время, только с пользой.</div>
+    </details>
+    <details>
+      <summary>«А вдруг деньги на ветер?»</summary>
+      <div class="answer">Вход 490 ₽ — дешевле одного похода в кофейню с десертом — и возврат за 7 дней одним сообщением. Мы убрали риск, насколько это вообще возможно.</div>
+    </details>
+    <details>
+      <summary>«Это заменяет врача или психотерапевта?»</summary>
+      <div class="answer">Нет. Если что-то болит или тяжело клинически, сначала к врачу. Практики работают с тем, что живёт рядом с любым диагнозом и без него: со стрессом, напряжением и отношением к себе. И мы не обещаем доход: убираем внутренний тормоз, а работаешь и растёшь ты сама.</div>
+    </details>
+    <details>
+      <summary>«Что будет после оплаты?»</summary>
+      <div class="answer">После оплаты на почту, которую ты укажешь в форме, придёт пароль. Вводишь его в приложении — и практики открываются. Если что-то не работает, напиши нам, поможем руками.</div>
+    </details>
+  </div>
+</section>
+
+<!-- Экран 9: финал -->
+<section class="reveal final">
+  <div class="col">
+    <h2>Твоё убеждение уже найдено. Осталось его переписать</h2>
+    <p id="final-p">Тест сделал первую половину работы: показал, что именно тебя держит. Вторая половина занимает 10 минут в день. Начни сегодня вечером.</p>
+    <p class="anchor-line">🔥 Цена запуска действует для первых покупателей — дальше поднимем.</p>
+    <a class="btn" id="btn-final" href="#">Получить набор за 490 ₽</a>
+    <a class="alt" id="btn-final-alt" href="#">или взять всю библиотеку за 1490 ₽</a>
+    <footer>
+      Практики не заменяют врача и психотерапевта. Доход не гарантируем: работаем с внутренними причинами, действуешь ты.<br>
+      Возврат 7 дней. Пароль доступа приходит на почту после проверки оплаты (обычно в течение пары часов).
+    </footer>
+  </div>
+</section>
+
+<script>
+'use strict';
+
+/* Яндекс-Форма оплаты (имя, email, выбор тарифа 490/1490; после отправки — ссылка на ЮMoney).
+   ЗАГЛУШКА #FORM_URL#: Руслан создаст форму и подставим реальный адрес forms.yandex.ru. */
+var FORM_URL = '#FORM_URL#';
+
+var THEMES = {
+  son: {
+    eyebrow: 'По результатам твоего теста',
+    h1: 'Засыпай за 10 минут без снотворного, даже если медитации раньше не помогали',
+    sub: 'Тест показал убеждение, из-за которого голова не выключается ночью. Короткие аудио-практики перед сном переписывают его за 2–3 недели, по 10 минут в день. Психология, а не магия.',
+    plan1: 'Стартовый набор темы «Сон»',
+    final: 'Тест сделал первую половину работы: показал, что именно держит твой сон. Вторая половина занимает 10 минут в день. Начни сегодня вечером.'
+  },
+  zdorovie: {
+    eyebrow: 'По результатам твоего теста',
+    h1: 'Верни себе силы, убрав не усталость, а её причину',
+    sub: 'Тест показал убеждение, из-за которого ты живёшь в постоянном напряжении и на последнем месте у самой себя. Короткие аудио-практики переписывают его за 2–3 недели, по 10 минут в день. Психология, а не магия.',
+    plan1: 'Стартовый набор темы «Здоровье и силы»',
+    final: 'Тест сделал первую половину работы: показал, что именно съедает твои силы. Вторая половина занимает 10 минут в день. Начни сегодня вечером.'
+  },
+  otnosheniya: {
+    eyebrow: 'По результатам твоего теста',
+    h1: 'Тебя начинают ценить, когда меняется то, как ты относишься к себе',
+    sub: 'Тест показал убеждение, из-за которого ты отдаёшь больше, чем получаешь. Короткие аудио-практики переписывают его за 2–3 недели, по 10 минут в день. И отношение к тебе меняется следом. Психология, а не магия.',
+    plan1: 'Стартовый набор темы «Отношения»',
+    final: 'Тест сделал первую половину работы: показал, что именно мешает твоим отношениям. Вторая половина занимает 10 минут в день. Начни сегодня вечером.'
+  },
+  dengi: {
+    eyebrow: 'По результатам твоего теста',
+    h1: 'Убери внутренний тормоз, который держит твой доход на одной планке',
+    sub: 'Тест показал убеждение, из-за которого деньги не задерживаются и не растут. Короткие аудио-практики переписывают его за 2–3 недели, по 10 минут в день. Психология, а не магия.',
+    plan1: 'Стартовый набор темы «Деньги»',
+    final: 'Тест сделал первую половину работы: показал, что именно держит твои деньги. Вторая половина занимает 10 минут в день. Начни сегодня вечером.'
+  }
+};
+
+var theme = new URLSearchParams(location.search).get('theme');
+var t = THEMES[theme] || null;
+var themeKey = t ? theme : 'son';
+
+if (t) {
+  document.getElementById('hero-eyebrow').textContent = t.eyebrow;
+  document.getElementById('hero-h1').textContent = t.h1;
+  document.getElementById('hero-sub').textContent = t.sub;
+  document.getElementById('plan1-theme').textContent = t.plan1;
+  document.getElementById('final-p').textContent = t.final;
+} else {
+  /* нейтральный заход: показываем состав «Сон» как пример */
+  document.getElementById('sostav-note').hidden = false;
+  document.getElementById('sostav-h2').textContent = 'Что внутри набора';
+}
+
+/* показать состав своей темы */
+document.querySelectorAll('.sostav').forEach(function (el) {
+  el.classList.toggle('active', el.getAttribute('data-theme') === themeKey);
+});
+
+/* Кнопки покупки → Яндекс-Форма. Тариф и тему передаём в адресе,
+   чтобы видеть в ответах формы, откуда пришёл человек. */
+function formLink(tarif) { return FORM_URL + '?tarif=' + tarif + '&theme=' + themeKey; }
+document.getElementById('btn-500').href = formLink(490);
+document.getElementById('btn-1500').href = formLink(1490);
+document.getElementById('btn-final').href = formLink(490);
+document.getElementById('btn-final-alt').href = formLink(1490);
+
+/* появление секций при скролле */
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('shown'); });
+} else {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+}
+</script>
+</body>
+</html>

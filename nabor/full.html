@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вся библиотека практик — 1490 ₽</title>
+<meta name="description" content="Открой всю библиотеку практик Алёны Весты одним платежом. Психология, а не магия.">
+<link rel="icon" href="logo.svg">
+<style>
+  :root {
+    --bg: #0d1420;
+    --surface: #131c2b;
+    --line: #223048;
+    --ink: #f0e7da;
+    --ink-dim: #9ba4b3;
+    --ink-faint: #67728a;
+    --amber: #d9a868;
+    --amber-deep: #b07f43;
+    --amber-glow: rgba(217, 168, 104, 0.16);
+    --radius: 20px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg) url('bg.svg') center / cover no-repeat fixed;
+    color: var(--ink);
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .col { max-width: 620px; margin: 0 auto; padding: 0 22px; }
+  section { padding-top: 56px; }
+  section:last-of-type { padding-bottom: 60px; }
+  h1, h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; line-height: 1.25; }
+  h1 { font-size: 32px; }
+  h2 { font-size: 24px; margin-bottom: 18px; }
+  .eyebrow {
+    font-size: 12.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 12px;
+  }
+  .sub { color: var(--ink-dim); margin-top: 14px; }
+  .logo img { width: 74px; height: 74px; margin-bottom: 18px; }
+  .hero { padding-top: 64px; text-align: center; }
+  .card {
+    background: rgba(19, 28, 43, 0.93); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px 20px; margin-top: 16px;
+  }
+  .card p { margin-bottom: 14px; }
+  .card p:last-child { margin-bottom: 0; }
+  ul.list { list-style: none; margin-top: 10px; }
+  ul.list li { position: relative; padding-left: 24px; margin-bottom: 10px; }
+  ul.list li::before { content: '✓'; position: absolute; left: 2px; color: var(--amber); }
+  .plan {
+    background: var(--amber-glow); border: 1px solid var(--amber-deep);
+    border-radius: var(--radius); padding: 26px 22px; margin-top: 22px; text-align: center;
+  }
+  .plan .price { font-family: Georgia, serif; font-size: 40px; color: var(--amber); margin: 8px 0 4px; }
+  .plan .price s { color: var(--ink-faint); font-size: 22px; margin-right: 10px; }
+  .fomo { color: var(--ink-dim); font-size: 15px; margin-top: 14px; }
+  .btn {
+    display: block; width: 100%; background: var(--amber); color: #1a1408;
+    border: none; border-radius: 16px; font-size: 17px; font-weight: 600;
+    padding: 17px 20px; margin-top: 20px; cursor: pointer; text-align: center;
+    text-decoration: none; transition: background 0.15s ease;
+  }
+  .btn:hover { background: #e4b87c; }
+  .guarantee { border-left: 2px solid var(--amber); padding-left: 16px; color: var(--ink-dim); margin-top: 16px; }
+  footer { color: var(--ink-faint); font-size: 13.5px; padding: 40px 0 26px; text-align: center; line-height: 1.6; }
+  @media (max-width: 480px) { h1 { font-size: 27px; } h2 { font-size: 21px; } }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="col">
+    <div class="logo"><img src="logo.svg" alt="Алёна Веста"></div>
+    <div class="eyebrow">Для тех, кто уже с нами</div>
+    <h1>Ты уже почувствовала, как работают практики. Открой всё остальное</h1>
+    <p class="sub">Твой набор закрыл одну тему. Но убеждения не живут поодиночке: то, что держит сон, держит и силы, и отношения, и деньги. Вся библиотека — это работа по всем слоям сразу.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Что открывается</h2>
+    <div class="card">
+      <ul class="list">
+        <li>Все практики библиотеки — медитации и сублиминалы, а не только 5 из твоего набора</li>
+        <li>Все будущие обновления: новые практики появляются в приложении сами, без доплат</li>
+        <li>Свободный порядок: слушай, что откликается сегодня</li>
+        <li>Доступ навсегда, один платёж, без подписки</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Один тариф — вся библиотека</h2>
+    <div class="plan">
+      <div class="eyebrow">Вся библиотека</div>
+      <div class="price"><s>2990 ₽</s>1490 ₽</div>
+      <div style="color:var(--ink-dim)">разовый платёж · доступ навсегда</div>
+      <p class="fomo">🔥 Это цена запуска для первых покупателей. После набора первой группы цена вырастет.</p>
+      <p class="fomo">🎁 Бонус за покупку сегодня: гайд «Режим сна» — подробно, как и почему работает сон, когда психика восстанавливается лучше всего и как высыпаться при любом графике.</p>
+      <a class="btn" id="btn-buy" href="#">Купить за 1490 ₽</a>
+    </div>
+    <p class="guarantee">Возврат 7 дней одним сообщением — как и на твой первый набор. Ты ничем не рискуешь.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Как получить доступ</h2>
+    <div class="card">
+      <p>1. Нажми «Купить» — откроется короткая форма: имя, почта и тариф.</p>
+      <p>2. После формы — оплата картой (ЮMoney).</p>
+      <p>3. Мы сверим оплату и пришлём пароль на почту (обычно в течение пары часов).</p>
+      <p>4. Введи пароль в приложении — вся библиотека откроется на твоём телефоне.</p>
+    </div>
+    <footer>
+      Практики не заменяют врача и психотерапевта. Доход не гарантируем: работаем с внутренними причинами, действуешь ты.<br>
+      Возврат 7 дней.
+    </footer>
+  </div>
+</section>
+
+<script>
+'use strict';
+/* Яндекс-Форма оплаты. ЗАГЛУШКА #FORM_URL#: заменить на реальный адрес forms.yandex.ru. */
+var FORM_URL = '#FORM_URL#';
+document.getElementById('btn-buy').href = FORM_URL + '?tarif=1490&from=app';
+</script>
+</body>
+</html>
