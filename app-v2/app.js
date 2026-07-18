@@ -367,7 +367,6 @@ function updateRepeatButton() {
 
 function onMediaTime(e) {
   if (e.target !== media) return;
-  updatePositionState();
   const bar = document.querySelector('.player-bar i');
   const time = document.querySelector('.player-time');
   if (!bar || !media.duration) return;
@@ -415,15 +414,48 @@ function updatePlayerButton() {
 }
 
 // Одни и те же обработчики на оба носителя; чужие события отсекаются внутри по e.target.
+// Позицию сообщаем системе в ключевые моменты (старт/пауза/перемотка/смена длительности) —
+// дальше заблокированный экран сам анимирует ползунок. Каждый тик слать нельзя: анимация замирает.
 for (const el of [audio, video]) {
   el.addEventListener('ended', onMediaEnded);
   el.addEventListener('timeupdate', onMediaTime);
   el.addEventListener('play', updatePlayerButton);
   el.addEventListener('pause', updatePlayerButton);
+  el.addEventListener('play', updatePositionState);
+  el.addEventListener('pause', updatePositionState);
+  el.addEventListener('seeked', updatePositionState);
+  el.addEventListener('durationchange', updatePositionState);
 }
 
 // Тап по самому видео — пауза/продолжить (привычный жест).
 video.addEventListener('click', togglePlay);
+
+// Экран погас: браузер принудительно ставит <video> на паузу — перекидываем звук ролика
+// в аудио-канал с той же секунды, чтобы сублиминал продолжал звучать. Вернулись — обратно в видео.
+document.addEventListener('visibilitychange', () => {
+  if (!playingTrack || playingTrack.media !== 'video') return;
+  if (document.hidden) {
+    if (media !== video || video.paused) return;
+    const pos = video.currentTime;
+    video.pause();
+    media = audio;
+    audio.src = playingTrack.file;
+    audio.addEventListener('loadedmetadata', () => { audio.currentTime = pos; }, { once: true });
+    audio.play().catch(() => {});
+    setMediaSession(playingTrack);
+  } else {
+    if (media !== audio) return;
+    const pos = audio.currentTime;
+    const wasPlaying = !audio.paused;
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    media = video;
+    video.currentTime = pos;
+    if (wasPlaying) video.play().catch(() => {});
+    setMediaSession(playingTrack);
+  }
+});
 
 async function cacheTrack(url) {
   if (!('caches' in window)) return;

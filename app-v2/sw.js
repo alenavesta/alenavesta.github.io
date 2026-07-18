@@ -1,7 +1,7 @@
 // Service worker: оболочка приложения работает офлайн,
 // аудио кэшируется отдельно при первом прослушивании (см. app.js → cacheTrack).
 
-const SHELL_CACHE = 'av-shell-v6'; // v6: чужие домены (видео с релизов) идут мимо сервис-воркера
+const SHELL_CACHE = 'av-shell-v7'; // v7: звук видео при выключенном экране + ползунок блок-экрана
 const AUDIO_CACHE = 'av-audio-v1';
 
 const SHELL = [
