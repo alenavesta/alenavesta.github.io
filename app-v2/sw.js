@@ -1,7 +1,7 @@
 // Service worker: оболочка приложения работает офлайн,
 // аудио кэшируется отдельно при первом прослушивании (см. app.js → cacheTrack).
 
-const SHELL_CACHE = 'av-shell-v5'; // v5: видео-сублиминалы + видео-плеер (2026-07-18)
+const SHELL_CACHE = 'av-shell-v6'; // v6: чужие домены (видео с релизов) идут мимо сервис-воркера
 const AUDIO_CACHE = 'av-audio-v1';
 
 const SHELL = [
@@ -35,6 +35,10 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
+
+  // Чужие домены (видео с GitHub Releases и т.п.) — напрямую в сеть, не перехватываем:
+  // потоковое видео просит файл кусками (Range), через respondWith это ломается.
+  if (url.origin !== location.origin) return;
 
   // Аудио: сначала кэш, иначе сеть (Range-запросы плеера пропускаем в сеть).
   if (url.pathname.includes('/audio/')) {

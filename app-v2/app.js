@@ -312,6 +312,32 @@ function setMediaSession(t) {
   });
   navigator.mediaSession.setActionHandler('play', () => media.play());
   navigator.mediaSession.setActionHandler('pause', () => media.pause());
+  try {
+    navigator.mediaSession.setActionHandler('seekto', (d) => {
+      if (d.seekTime != null && media.duration) {
+        media.currentTime = d.seekTime;
+        updatePositionState();
+      }
+    });
+  } catch {
+    /* старые браузеры без seekto — не страшно */
+  }
+}
+
+// Сообщаем системе позицию трека — тогда ползунок на заблокированном экране
+// движется в реальном времени, а не только после паузы.
+function updatePositionState() {
+  if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+  if (!media.duration || !isFinite(media.duration)) return;
+  try {
+    navigator.mediaSession.setPositionState({
+      duration: media.duration,
+      playbackRate: media.playbackRate,
+      position: media.currentTime,
+    });
+  } catch {
+    /* некритично */
+  }
 }
 
 function onMediaEnded(e) {
@@ -341,6 +367,7 @@ function updateRepeatButton() {
 
 function onMediaTime(e) {
   if (e.target !== media) return;
+  updatePositionState();
   const bar = document.querySelector('.player-bar i');
   const time = document.querySelector('.player-time');
   if (!bar || !media.duration) return;
@@ -356,13 +383,22 @@ function fmt(sec) {
 
 function openPlayer(t) {
   const el = document.getElementById('player');
+  const wasOpen = el.classList.contains('open');
   el.querySelector('h2').textContent = t.title;
   el.classList.add('open');
+  // Плеер — «шаг» в истории браузера: свайп назад закроет его, а не приложение.
+  if (!wasOpen) history.pushState({ layer: 'player', screen }, '');
   updatePlayerButton();
   updateRepeatButton();
 }
 
+// Публичное закрытие — через шаг назад в истории (кнопка «← назад», конец трека).
 function closePlayer() {
+  if (document.getElementById('player').classList.contains('open')) history.back();
+}
+
+// Фактическое закрытие — вызывается обработчиком истории (popstate).
+function _closePlayerNow() {
   document.getElementById('player').classList.remove('open');
   if (!media.paused) media.pause();
 }
@@ -514,7 +550,8 @@ async function applyCode(inputId, msgId) {
   msg.textContent = 'Готово. Доступ открыт.';
   msg.className = 'msg ok';
   setTimeout(() => {
-    closePaywall();
+    // Закрываем напрямую (не через history.back), чтобы не спорить с переходом go('today').
+    _closePaywallNow();
     go('today');
   }, 900);
 }
@@ -543,10 +580,20 @@ function openPaywall(trackId) {
     <a class="btn" href="${buyUrl}${upgrade ? '' : `?theme=${theme}`}">
       Купить${upgrade ? ` за ${PRICING.full.price} ₽` : ''}
     </a>`;
-  document.getElementById('modal').classList.add('open');
+  const modal = document.getElementById('modal');
+  const wasOpen = modal.classList.contains('open');
+  modal.classList.add('open');
+  // Модалка — «шаг» в истории: свайп назад закроет её, а не приложение.
+  if (!wasOpen) history.pushState({ layer: 'modal', screen }, '');
 }
 
+// Публичное закрытие (крестик, тап по фону) — через шаг назад в истории.
 function closePaywall() {
+  if (document.getElementById('modal').classList.contains('open')) history.back();
+}
+
+// Фактическое закрытие — вызывается обработчиком истории (popstate).
+function _closePaywallNow() {
   document.getElementById('modal').classList.remove('open');
 }
 
@@ -564,14 +611,32 @@ function resetProgress(skipConfirm = false) {
 /* ---------- Экраны ---------- */
 
 let screen = 'today';
+let navReady = false; // до первого рендера историю браузера не трогаем
 
-function go(name) {
+function go(name, opts = {}) {
   // Пока квиз не пройден, «Сегодня» и «Программа» ведут в квиз.
   if ((name === 'today' || name === 'program') && !quizResult()) name = 'quiz';
   screen = name;
+  // Каждый переход — запись в истории браузера, чтобы свайп назад шагал по экранам.
+  if (navReady && !opts.fromHistory) history.pushState({ screen: name }, '');
   render();
   window.scrollTo(0, 0);
 }
+
+// Свайп назад / кнопка назад: сначала закрываем верхний слой (модалка, плеер),
+// иначе возвращаемся на экран из истории. С самого первого экрана — обычный выход.
+window.addEventListener('popstate', (e) => {
+  if (document.getElementById('modal').classList.contains('open')) {
+    _closePaywallNow();
+    return;
+  }
+  if (document.getElementById('player').classList.contains('open')) {
+    _closePlayerNow();
+    return;
+  }
+  const name = e.state && e.state.screen ? e.state.screen : quizResult() ? 'today' : 'quiz';
+  go(name, { fromHistory: true });
+});
 
 function greeting() {
   const h = new Date().getHours();
@@ -604,10 +669,13 @@ function trackRow(t, { showAbout = false } = {}) {
   const locked = !hasAccess(t.id);
   const heard = !!listenedMap()[t.id];
   const aboutOpen = openAbout.has(t.id);
+  // Тап по названию/строке запускает трек (или показывает замок) — не только круглая кнопка.
+  const rowAction = locked ? `openPaywall('${t.id}')` : `play('${t.id}')`;
   return `
     <div class="card">
       <div class="row">
-        <div class="grow">
+        <div class="grow track-click" role="button" tabindex="0" onclick="${rowAction}"
+             onkeydown="if(event.key==='Enter')${rowAction}">
           <div class="track-title">${heard ? '<span class="heard">✓</span> ' : ''}${esc(t.title)}</div>
           <div class="track-meta">${esc(t.type)} · ${esc(t.duration)}</div>
           ${t.type === 'сублиминал' ? '<span class="badge">дополнительный фон</span>' : ''}
@@ -790,3 +858,6 @@ if (!quizResult()) {
   quiz.phase = 'result'; // чтобы «Смотреть результат полностью» показывал сохранённый результат
   go('today');
 }
+// Стартовый экран — первая запись в истории; дальше go() добавляет по записи на переход.
+history.replaceState({ screen }, '');
+navReady = true;
