@@ -265,7 +265,7 @@ function renderOffer(result) {
         </div>
       </a>
       <p class="fomo">🔥 ${esc(FOMO.launch)}</p>
-      <p class="fomo">🎁 ${esc(FOMO.bonus)}</p>
+      <p class="fomo">🎁 ${esc(FOMO.bonusByTheme[theme] || FOMO.bonus)}</p>
       <a class="btn" href="${myUrl}">${esc(result ? result.cta : 'Выбрать тариф и купить')}</a>
       <button class="btn ghost" onclick="go('access')">У меня уже есть пароль</button>
     </div>`;
