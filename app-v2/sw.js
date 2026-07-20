@@ -1,7 +1,9 @@
 // Service worker: оболочка приложения работает офлайн,
 // аудио кэшируется отдельно при первом прослушивании (см. app.js → cacheTrack).
 
-const SHELL_CACHE = 'av-shell-v9'; // v9: кнопка установки + запрет перекраски темы (color-scheme)
+// ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
+// именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
+const SHELL_CACHE = 'av-shell-v10'; // v10: автообновление приложения без переустановки
 const AUDIO_CACHE = 'av-audio-v1';
 
 const SHELL = [
@@ -20,7 +22,11 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL)));
+  // cache: 'reload' — качаем оболочку с сервера напрямую, минуя HTTP-кэш браузера,
+  // иначе в новую версию могут попасть старые файлы.
+  e.waitUntil(
+    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' }))))
+  );
   self.skipWaiting();
 });
 

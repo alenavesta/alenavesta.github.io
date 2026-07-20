@@ -931,8 +931,48 @@ document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') closePaywall();
 });
 
+/* ---------- Автообновление приложения ---------- */
+// Новая версия сайта = новый sw.js (бамп av-shell-vN). Браузер ставит его в фоне,
+// а мы перезагружаем страницу сами — но только когда это безопасно:
+// ничего не играет и человек не в середине теста.
+
+let updateReady = false;
+
+function maybeApplyUpdate() {
+  if (!updateReady) return;
+  const midQuiz = screen === 'quiz' && quiz.phase !== 'intro' && quiz.phase !== 'result';
+  if (!media.paused || midQuiz) return; // не мешаем — попробуем на паузе или после теста
+  updateReady = false;
+  location.reload();
+}
+
+audio.addEventListener('pause', maybeApplyUpdate);
+audio.addEventListener('ended', maybeApplyUpdate);
+video.addEventListener('pause', maybeApplyUpdate);
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker
+    .register('sw.js')
+    .then((reg) => {
+      // Проверяем новую версию при каждом возвращении в приложение и раз в час.
+      const checkUpdate = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          checkUpdate();
+          maybeApplyUpdate();
+        }
+      });
+      setInterval(checkUpdate, 60 * 60 * 1000);
+    })
+    .catch(() => {});
+
+  // Смена активного воркера = новая версия скачана и готова.
+  let hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) { hadController = true; return; } // самая первая установка — не перезагружаем
+    updateReady = true;
+    maybeApplyUpdate();
+  });
 }
 
 // Первый запуск (нет результата квиза) → квиз. Иначе — «Сегодня».
