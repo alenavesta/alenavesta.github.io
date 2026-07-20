@@ -1,9 +1,13 @@
-// Скрытый каталог VIP-курса «Целостность». 34 медитации.
+// Скрытый VIP-каталог: «Целостность» (34) + «Проработки» (21).
 // Файл грузится динамически только после ввода VIP-пароля.
 // Имя = celo-<первые16 hex ОТ sha256(пароль + соль)>.js — из хэша в data.js имя не вычислить.
 // В data.js / app.js этот курс НЕ упоминается: покупатели 490/1490 его не видят.
 const CELO_BASE = 'https://github.com/alenavesta/alenavesta.github.io/releases/download/celo-v1/';
-window.VIP_SECTION = { title: 'Целостность' };
+// Разделы VIP-библиотеки (порядок = порядок показа). Каждый трек попадает в раздел по своему category.
+window.VIP_SECTIONS = [
+  { id: 'celostnost', title: 'Целостность' },
+  { id: 'prorabotki', title: 'Проработки' },
+];
 window.VIP_TRACKS = {
   celo_01: { id: 'celo_01', title: 'Предисловие', type: 'медитация', category: 'celostnost', media: 'audio', stream: true, duration: '', about: 'Медитация из курса «Целостность».', file: CELO_BASE + 'celo-74f83781a4fe.m4a' },
   celo_02: { id: 'celo_02', title: '#1 · Целостность 3.0', type: 'медитация', category: 'celostnost', media: 'audio', stream: true, duration: '', about: 'Медитация из курса «Целостность».', file: CELO_BASE + 'celo-a079d9d3e0f8.m4a' },
@@ -39,4 +43,25 @@ window.VIP_TRACKS = {
   celo_32: { id: 'celo_32', title: 'Бонус · Сила и уверенность в себе', type: 'медитация', category: 'celostnost', media: 'audio', stream: true, duration: '', about: 'Медитация из курса «Целостность».', file: CELO_BASE + 'celo-b8e830a57de3.m4a' },
   celo_33: { id: 'celo_33', title: 'Бонус · Маха Мантра', type: 'медитация', category: 'celostnost', media: 'audio', stream: true, duration: '', about: 'Медитация из курса «Целостность».', file: CELO_BASE + 'celo-554ec2531e44.m4a' },
   celo_34: { id: 'celo_34', title: 'Бонус · Денежный поток', type: 'медитация', category: 'celostnost', media: 'audio', stream: true, duration: '', about: 'Медитация из курса «Целостность».', file: CELO_BASE + 'celo-d022ec63b32c.m4a' },
+  prb_01: { id: 'prb_01', title: '#1 · Мама', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-c13f5657b2bf.m4a' },
+  prb_02: { id: 'prb_02', title: '#2 · Папа', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-e093e8d3f95f.m4a' },
+  prb_03: { id: 'prb_03', title: '#3 · Род', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-dd4a70627243.m4a' },
+  prb_04: { id: 'prb_04', title: '#4 · Избавление от обид, исцеление тела', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-9774f2980bf3.m4a' },
+  prb_05: { id: 'prb_05', title: '#5 · Прощение себя', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-bf1c56e4b89b.m4a' },
+  prb_06: { id: 'prb_06', title: '#6 · Принятие своих комплексов, своего тела', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-042958dc4e37.m4a' },
+  prb_07: { id: 'prb_07', title: '#7 · Принятие своей природы', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-3902a24d89cd.m4a' },
+  prb_08: { id: 'prb_08', title: '#8 · Принятие себя', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-643afea28530.m4a' },
+  prb_09: { id: 'prb_09', title: '#9 · Принятие воли Господа, кармы, той жизни', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-3ee6db90e1f0.m4a' },
+  prb_10: { id: 'prb_10', title: '#10 · Дети мне даны Богом', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-55c169129599.m4a' },
+  prb_11: { id: 'prb_11', title: '#11 · Партнёр мне дан Богом', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-24edf9dbbafc.m4a' },
+  prb_12: { id: 'prb_12', title: '#12 · Принятие всех живых существ как детей Бога', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-c41f58643068.m4a' },
+  prb_13: { id: 'prb_13', title: '#13 · Раскаяние перед теми, кому делал больно', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-8f03e97aeda2.m4a' },
+  prb_14: { id: 'prb_14', title: '#14 · Благодарность родителям', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-190e7856d3be.m4a' },
+  prb_15: { id: 'prb_15', title: '#15 · Благодарность Богу', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-cc239ae26888.m4a' },
+  prb_16: { id: 'prb_16', title: '#16 · Финансовое изобилие', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-47fb56c88622.m4a' },
+  prb_17: { id: 'prb_17', title: '#17 · Освобождение от блоков', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-caf9f4595914.m4a' },
+  prb_18: { id: 'prb_18', title: '#18 · Автор своей жизни, смелость и решительность', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-f39024a7d6a4.m4a' },
+  prb_19: { id: 'prb_19', title: '#19 · Поиск своих талантов и предназначения', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-6c53e5404b22.m4a' },
+  prb_20: { id: 'prb_20', title: '#20 · Предание Богу', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-50c62397a3e2.m4a' },
+  prb_21: { id: 'prb_21', title: 'Бонус · Ангельский портал новых энергий', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-f1f6aa5ad526.mp3' },
 };

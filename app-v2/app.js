@@ -925,19 +925,22 @@ function renderLibrary() {
         : `<p class="dim small" style="padding:8px 4px 4px">${esc(cat.empty || 'Скоро появится.')}</p>`;
     }
   }
-  // Скрытый VIP-раздел — виден только автору (level vip) и только когда каталог загружен.
-  // Название раздела берём из каталога, чтобы в публичном коде приложения его не было.
+  // Скрытые VIP-разделы — видны только автору (level vip) и только когда каталог загружен.
+  // Названия и состав берём из каталога, чтобы в публичном коде приложения их не было.
   if (level() === 'vip' && window.VIP_TRACKS) {
-    const vipIds = Object.keys(window.VIP_TRACKS);
-    const open = openCats.has('celostnost');
-    const vipTitle = (window.VIP_SECTION && window.VIP_SECTION.title) || 'Закрытый раздел';
-    html += `
-      <button class="cat-head" onclick="toggleCat('celostnost')">
-        <span>${esc(vipTitle)}</span>
-        <span class="cat-meta">${vipIds.length} ${open ? '▴' : '▾'}</span>
+    const sections = window.VIP_SECTIONS || [{ id: 'celostnost', title: 'Закрытый раздел' }];
+    for (const sec of sections) {
+      const ids = Object.keys(window.VIP_TRACKS).filter((id) => window.VIP_TRACKS[id].category === sec.id);
+      if (!ids.length) continue;
+      const open = openCats.has(sec.id);
+      html += `
+      <button class="cat-head" onclick="toggleCat('${sec.id}')">
+        <span>${esc(sec.title)}</span>
+        <span class="cat-meta">${ids.length} ${open ? '▴' : '▾'}</span>
       </button>`;
-    if (open) {
-      html += vipIds.map((id) => trackRow(TRACKS[id], { showAbout: false })).join('');
+      if (open) {
+        html += ids.map((id) => trackRow(TRACKS[id], { showAbout: false })).join('');
+      }
     }
   }
   if (level() === 'my') {
