@@ -957,17 +957,45 @@ function renderLibrary() {
   return html;
 }
 
+// 5 тапов по заголовку экрана «Доступ» открывают скрытое поле ввода особого пароля
+// (нужно автору, когда уже открыт полный доступ и обычного поля пароля нет).
+let _secretTaps = 0;
+let _secretTimer = null;
+function secretTap() {
+  if (level() !== 'full' && level() !== 'vip') return; // на none/my поле и так есть
+  if (window._secretCode) return;
+  _secretTaps++;
+  clearTimeout(_secretTimer);
+  _secretTimer = setTimeout(() => { _secretTaps = 0; }, 2000);
+  if (_secretTaps >= 5) {
+    _secretTaps = 0;
+    window._secretCode = true;
+    render();
+    toast('Введите особый пароль');
+  }
+}
+
 function renderAccess() {
   const lvl = level();
   const names = { none: 'Доступ не открыт', my: `Тариф «${PRICING.my.title}»`, full: `Тариф «${PRICING.full.title}»`, vip: 'VIP-доступ' };
   const codeForm = `
       <input type="text" id="code-input" placeholder="Пароль из письма" autocomplete="off" />
       <div id="code-msg" class="msg" role="status"></div>`;
+  // Скрытый ввод особого пароля: на «полных» уровнях поля пароля нет (всё уже открыто),
+  // поэтому автору некуда ввести VIP-код. Появляется после 5 тапов по заголовку (secretTap),
+  // чтобы обычные покупатели 1490 его не видели.
+  const secretBlock = window._secretCode
+    ? `
+      <hr class="divider" />
+      <p class="dim small" style="margin-top:12px">Особый пароль:</p>
+      ${codeForm}
+      <button class="btn ghost" onclick="applyCode('code-input','code-msg')">Открыть доступ</button>`
+    : '';
   let body;
   if (lvl === 'vip') {
-    body = '<p class="dim" style="margin-top:12px">Открыто всё, включая закрытый курс. Хорошего вечера.</p>';
+    body = '<p class="dim" style="margin-top:12px">Открыто всё, включая закрытый курс. Хорошего вечера.</p>' + secretBlock;
   } else if (lvl === 'full') {
-    body = '<p class="dim" style="margin-top:12px">Открыто всё. Хорошего вечера.</p>';
+    body = '<p class="dim" style="margin-top:12px">Открыто всё. Хорошего вечера.</p>' + secretBlock;
   } else if (lvl === 'my') {
     // Набор уже куплен — не предлагаем «выбрать тариф», только апгрейд до полной библиотеки.
     body = `
@@ -987,7 +1015,7 @@ function renderAccess() {
   }
   return `
     <div class="eyebrow">Доступ</div>
-    <h1>${names[lvl]}</h1>
+    <h1 onclick="secretTap()" style="cursor:default">${names[lvl]}</h1>
     ${body}
     ${installCard()}
     <hr class="divider" />
