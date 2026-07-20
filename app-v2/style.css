@@ -401,13 +401,16 @@ input[type='text'] {
   padding: 15px;
   margin-top: 14px;
   border-radius: 14px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
+  border: 1px solid var(--amber-deep);
+  background: #f5efe4;
+  color: #1a2433;
+  caret-color: #1a2433;
   font-size: 17px;
   text-align: center;
   letter-spacing: 0.06em;
 }
+
+input[type='text']::placeholder { color: #8a8577; }
 
 input[type='text']:focus-visible { outline: 2px solid var(--amber); border-color: transparent; }
 

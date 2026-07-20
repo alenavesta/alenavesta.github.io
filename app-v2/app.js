@@ -241,7 +241,7 @@ function renderOffer(result) {
   const myUrl = `${BUY_URLS.tariffs}?theme=${theme}#plan-my`;
   const fullUrl = `${BUY_URLS.tariffs}?theme=${theme}#plan-full`;
   return `
-    <p class="dim" style="margin-top:26px">${esc(OFFER_BRIDGE)}</p>
+    <p class="dim" style="margin-top:26px">${esc(result ? result.bridge : '')}</p>
     <div class="eyebrow" style="margin-top:24px">Твой набор практик</div>
     <p class="dim small" style="margin-top:4px">Подобраны под твоё корневое убеждение — слушать можно в любом порядке.</p>
     ${recs.map((id) => trackRow(TRACKS[id])).join('')}
@@ -605,7 +605,7 @@ function openPaywall(trackId) {
         : `Практики открываются после оплаты: «${esc(PRICING.my.title)}» — ${PRICING.my.price} ₽, «${esc(PRICING.full.title)}» — ${PRICING.full.price} ₽.`}
     </p>
     <p class="fomo">🔥 ${esc(FOMO.launch)}</p>
-    <p class="fomo">🎁 ${esc(FOMO.bonus)}</p>
+    <p class="fomo">🎁 ${esc(FOMO.bonusByTheme[theme] || FOMO.bonus)}</p>
     <input type="text" id="modal-code" placeholder="Пароль из письма" autocomplete="off" />
     <div id="modal-msg" class="msg" role="status"></div>
     <button class="btn ghost" onclick="applyCode('modal-code','modal-msg')">У меня есть пароль</button>
@@ -885,7 +885,7 @@ function renderAccess() {
     }
     ${installCard()}
     <hr class="divider" />
-    <p class="dim small">Вопросы и возврат — напиши нам, отвечает живой человек. Гарантия возврата 7 дней.</p>
+    <p class="dim small">Вопросы и возврат — напиши нам, отвечает живой человек. Гарантия возврата 14 дней.</p>
     <p class="dim small" style="margin-top:14px">Это практики для спокойствия и сна. Они не заменяют врача и не лечат болезни.</p>`;
 }
 
