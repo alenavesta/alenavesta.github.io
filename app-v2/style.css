@@ -414,6 +414,47 @@ input[type='text']::placeholder { color: #8a8577; }
 
 input[type='text']:focus-visible { outline: 2px solid var(--amber); border-color: transparent; }
 
+/* ---------- Плашка обновления ---------- */
+
+#update-banner {
+  position: fixed;
+  left: 14px; right: 14px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 45;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--amber-deep);
+  background: var(--surface-2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+#update-banner.show { display: flex; }
+
+#update-banner .update-text { flex: 1; font-size: 14px; color: var(--ink); }
+
+#update-banner .update-now {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 14px;
+  background: var(--amber);
+  color: #1a2433;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#update-banner .update-later {
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  font-size: 14px;
+  padding: 9px 4px;
+  cursor: pointer;
+}
+
 .msg { margin-top: 12px; font-size: 15px; }
 .msg.ok { color: var(--sage); }
 .msg.err { color: #c98872; }

@@ -932,23 +932,29 @@ document.getElementById('modal').addEventListener('click', (e) => {
 });
 
 /* ---------- Автообновление приложения ---------- */
-// Новая версия сайта = новый sw.js (бамп av-shell-vN). Браузер ставит его в фоне,
-// а мы перезагружаем страницу сами — но только когда это безопасно:
-// ничего не играет и человек не в середине теста.
+// Новая версия сайта = новый sw.js (бамп av-shell-vN). Браузер скачивает её в фоне,
+// а человеку показываем плашку «Вышло обновление» — сам решает, обновить сейчас или позже.
+// Посреди практики или теста плашку не показываем — предложим на паузе или после.
 
 let updateReady = false;
+let updateSnoozed = false; // нажал «Позже» — молчим до следующего возвращения в приложение
 
-function maybeApplyUpdate() {
-  if (!updateReady) return;
+function offerUpdate() {
+  if (!updateReady || updateSnoozed) return;
   const midQuiz = screen === 'quiz' && quiz.phase !== 'intro' && quiz.phase !== 'result';
-  if (!media.paused || midQuiz) return; // не мешаем — попробуем на паузе или после теста
-  updateReady = false;
-  location.reload();
+  if (!media.paused || midQuiz) return;
+  document.getElementById('update-banner').classList.add('show');
 }
 
-audio.addEventListener('pause', maybeApplyUpdate);
-audio.addEventListener('ended', maybeApplyUpdate);
-video.addEventListener('pause', maybeApplyUpdate);
+document.getElementById('update-now').addEventListener('click', () => location.reload());
+document.getElementById('update-later').addEventListener('click', () => {
+  updateSnoozed = true;
+  document.getElementById('update-banner').classList.remove('show');
+});
+
+audio.addEventListener('pause', offerUpdate);
+audio.addEventListener('ended', offerUpdate);
+video.addEventListener('pause', offerUpdate);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
@@ -959,7 +965,8 @@ if ('serviceWorker' in navigator) {
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           checkUpdate();
-          maybeApplyUpdate();
+          updateSnoozed = false; // человек вернулся — можно предложить снова
+          offerUpdate();
         }
       });
       setInterval(checkUpdate, 60 * 60 * 1000);
@@ -969,9 +976,9 @@ if ('serviceWorker' in navigator) {
   // Смена активного воркера = новая версия скачана и готова.
   let hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!hadController) { hadController = true; return; } // самая первая установка — не перезагружаем
+    if (!hadController) { hadController = true; return; } // самая первая установка — не предлагаем
     updateReady = true;
-    maybeApplyUpdate();
+    offerUpdate();
   });
 }
 
