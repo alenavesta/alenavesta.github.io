@@ -229,7 +229,11 @@ function renderQuizResult() {
         ${result.legal ? `<p class="legal">${esc(result.legal)}</p>` : ''}
       </div>
       ${renderOffer(result)}
-      <button class="restart" onclick="quizStart()">Пройти тест ещё раз</button>
+      ${
+        level() === 'my'
+          ? `<p class="dim small" style="margin-top:18px">Пройти тест заново и собрать набор под другую сферу можно на тарифе «${esc(PRICING.full.title)}» — там открыты все практики.</p>`
+          : `<button class="restart" onclick="quizStart()">Пройти тест ещё раз</button>`
+      }
     </div>`;
 }
 
@@ -632,12 +636,23 @@ function _closePaywallNow() {
 /* ---------- Сброс прогресса ---------- */
 
 // Снимает отметки «прослушано», стирает результат квиза и запускает квиз заново.
-// Оплаченный уровень доступа НЕ трогаем.
+// Оплаченный уровень доступа НЕ трогаем. Для тарифа «Мой набор» НЕ вызывать:
+// на 490 ₽ доступ привязан к подобранному набору, повторный тест подменил бы купленное
+// (см. resetListened — мягкий сброс для этого тарифа).
 function resetProgress(skipConfirm = false) {
   if (!skipConfirm && !confirm('Сбросить отметки «прослушано» и пройти тест заново?')) return;
   store.write({ listened: {}, quiz: null, recommended: [] });
   quizStart();
   toast('Прогресс сброшен');
+}
+
+// Мягкий сброс для тарифа «Мой набор»: только галочки «прослушано»,
+// набор, результат теста и доступ остаются как есть.
+function resetListened() {
+  if (!confirm('Снять отметки «прослушано»?')) return;
+  store.write({ listened: {} });
+  render();
+  toast('Отметки сброшены');
 }
 
 /* ---------- Установка приложения (PWA) ---------- */
@@ -842,8 +857,19 @@ function renderProgram() {
     ${recs.map((id) => trackRow(TRACKS[id], { showAbout: true })).join('')}
     ${level() === 'none' ? `<div class="card soft"><p class="dim small">Набор откроется после оплаты. Пароль придёт на почту.</p><a class="btn" href="${BUY_URLS.tariffs}">Выбрать тариф и купить</a></div>` : ''}
     <hr class="divider" />
+    ${
+      level() === 'my'
+        ? `
+    <div class="card soft">
+      <p class="dim small">Хочешь практики под другие сферы? «${esc(PRICING.full.title)}» открывает все медитации и сублиминалы, а тест можно проходить заново сколько угодно.</p>
+      <a class="btn" href="${BUY_URLS.full}">Открыть всё за ${PRICING.full.price} ₽</a>
+    </div>
+    <button class="btn ghost" onclick="resetListened()">Сбросить отметки «прослушано»</button>
+    <p class="dim small" style="margin-top:10px">Сброс снимет галочки, и программу можно пройти заново. Твой набор и доступ сохраняются.</p>`
+        : `
     <button class="btn ghost" onclick="resetProgress()">Сбросить прогресс и пройти тест заново</button>
-    <p class="dim small" style="margin-top:10px">Сброс снимет отметки «прослушано» и запустит тест с начала — набор подберётся заново. Купленный доступ сохраняется.</p>`;
+    <p class="dim small" style="margin-top:10px">Сброс снимет отметки «прослушано» и запустит тест с начала — набор подберётся заново. Купленный доступ сохраняется.</p>`
+    }`;
 }
 
 function renderLibrary() {
