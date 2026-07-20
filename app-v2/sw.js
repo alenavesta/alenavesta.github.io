@@ -3,7 +3,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v20'; // v20: убран бонус-трек из «Проработок» (20 треков)
+const SHELL_CACHE = 'av-shell-v21'; // v21: реальное аудио сонных медитаций + фото на экране плеера
 const AUDIO_CACHE = 'av-audio-v1';
 
 const SHELL = [
@@ -19,6 +19,11 @@ const SHELL = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
+  './covers/mini-usnut-za-10-minut.png',
+  './covers/otpustit-den.png',
+  './covers/tihiy-um.png',
+  './covers/glubokiy-son.png',
+  './covers/spokoynoe-zavtra.png',
 ];
 
 self.addEventListener('install', (e) => {

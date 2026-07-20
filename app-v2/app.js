@@ -311,10 +311,12 @@ function setMediaSession(t) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: t.title,
     artist: 'alenavesta · Спокойный сон',
-    artwork: [
-      { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
+    artwork: t.cover
+      ? [{ src: t.cover, sizes: '1536x1024', type: 'image/png' }]
+      : [
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        ],
   });
   navigator.mediaSession.setActionHandler('play', () => media.play());
   navigator.mediaSession.setActionHandler('pause', () => media.pause());
@@ -390,6 +392,17 @@ function openPlayer(t) {
   const el = document.getElementById('player');
   const wasOpen = el.classList.contains('open');
   el.querySelector('h2').textContent = t.title;
+  // Фото трека (если есть): показываем карточкой на экране плеера.
+  const cover = document.getElementById('player-cover');
+  if (t.cover && t.media !== 'video') {
+    cover.src = t.cover;
+    cover.alt = t.title;
+    el.classList.add('has-cover');
+  } else {
+    cover.removeAttribute('src');
+    cover.alt = '';
+    el.classList.remove('has-cover');
+  }
   el.classList.add('open');
   // Плеер — «шаг» в истории браузера: свайп назад закроет его, а не приложение.
   if (!wasOpen) history.pushState({ layer: 'player', screen }, '');

@@ -323,6 +323,36 @@ nav button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px;
 #player.video-mode .halo { display: none; }
 #player.video-mode .play-big { width: 84px; height: 84px; }
 
+/* Фото трека на экране плеера: скруглённая карточка, кнопка play/pause поверх. */
+.halo-cover { display: none; }
+#player.has-cover .halo-wrap {
+  position: relative;
+  display: block;
+  width: min(88vw, 400px);
+  height: auto;
+  margin: 10px auto 24px;
+  border-radius: 20px;
+}
+#player.has-cover .halo { display: none; }
+#player.has-cover .halo-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+}
+#player.has-cover .play-big {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  background: rgba(13, 20, 32, 0.5);
+  border-color: rgba(217, 168, 104, 0.85);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+#player.has-cover .play-big:active { transform: translate(-50%, -50%) scale(0.96); }
+
 #player .hint-video { display: none; }
 #player.video-mode .hint { display: none; }
 #player.video-mode .hint-video { display: block; }
