@@ -400,13 +400,16 @@ const QUIZ_RECOMMEND = {
   'son.A': ['mini', 'tihiy_um', 'otpustit', 'glubokiy_son', 'tihaya_noch'],
   'son.B': ['mini', 'otpustit', 'perezagruzka', 'glubokiy_son', 'tihaya_noch'],
   'son.C': ['mini', 'snyat_trevogu', 'vernut_pokoy', 'glubokiy_son', 'tihaya_noch'],
-  'zdorovie.A': ['snyat_trevogu', 'vernut_pokoy', 'sub_trevozhnost', 'sub_negativnye_mysli', 'sub_spokoystvie'],
-  'zdorovie.B': ['perezagruzka', 'otpustit', 'sub_stress', 'sub_spokoystvie', 'sub_samoocenka'],
-  'zdorovie.C': ['vernut_pokoy', 'snyat_trevogu', 'sub_samoocenka', 'sub_negativnye_mysli', 'sub_spokoystvie'],
-  'otnosheniya.A': ['vernut_pokoy', 'snyat_trevogu', 'sub_samoocenka', 'sub_lyubov', 'sub_magnetizm'],
-  'otnosheniya.B': ['tihiy_um', 'vernut_pokoy', 'sub_samoocenka', 'sub_negativnye_mysli', 'sub_lyubov'],
-  'otnosheniya.C': ['snyat_trevogu', 'vernut_pokoy', 'sub_trevozhnost', 'sub_lyubov', 'sub_magnetizm'],
-  'dengi.A': ['perezagruzka', 'tihiy_um', 'sub_uverennost', 'sub_samoocenka', 'sub_dengi'],
-  'dengi.B': ['snyat_trevogu', 'vernut_pokoy', 'sub_trevozhnost', 'sub_uverennost', 'sub_dengi'],
-  'dengi.C': ['tihiy_um', 'perezagruzka', 'sub_negativnye_mysli', 'sub_uverennost', 'sub_dengi'],
+  // Ветка «Здоровье» пересобрана на тематические медитации (2026-07-20): название и описание попадают в убеждение результата.
+  'zdorovie.A': ['z_doveryat_telu', 'z_prinyat_telo', 'sub_trevozhnost', 'sub_negativnye_mysli', 'sub_spokoystvie'],
+  'zdorovie.B': ['z_otpustit_obidy', 'perezagruzka', 'sub_stress', 'sub_samoocenka', 'sub_spokoystvie'],
+  'zdorovie.C': ['z_prinyat_telo', 'vernut_pokoy', 'sub_samoocenka', 'sub_negativnye_mysli', 'sub_spokoystvie'],
+  // Ветка «Отношения» пересобрана на тематические медитации (2026-07-20). Сублиминалы прежние (в тему).
+  'otnosheniya.A': ['o_pravo_poluchat', 'o_prostit_sebya', 'sub_samoocenka', 'sub_lyubov', 'sub_magnetizm'],
+  'otnosheniya.B': ['o_prostit_sebya', 'tihiy_um', 'sub_samoocenka', 'sub_negativnye_mysli', 'sub_lyubov'],
+  'otnosheniya.C': ['o_bezopasnaya_blizost', 'snyat_trevogu', 'sub_trevozhnost', 'sub_lyubov', 'sub_magnetizm'],
+  // Ветка «Деньги» пересобрана на тематические медитации (2026-07-20): в каждом наборе обе медитации тематические.
+  'dengi.A': ['d_razreshit_bolshe', 'd_dengi_bez_viny', 'sub_uverennost', 'sub_samoocenka', 'sub_dengi'],
+  'dengi.B': ['d_dengi_bez_viny', 'd_spokoynye_dengi', 'sub_trevozhnost', 'sub_uverennost', 'sub_dengi'],
+  'dengi.C': ['d_spokoynye_dengi', 'd_razreshit_bolshe', 'sub_negativnye_mysli', 'sub_uverennost', 'sub_dengi'],
 };

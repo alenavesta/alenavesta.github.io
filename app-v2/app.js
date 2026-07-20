@@ -248,7 +248,7 @@ function renderOffer(result) {
     <p class="dim" style="margin-top:26px">${esc(result ? result.bridge : '')}</p>
     <div class="eyebrow" style="margin-top:24px">Твой набор практик</div>
     <p class="dim small" style="margin-top:4px">Подобраны под твоё корневое убеждение — слушать можно в любом порядке.</p>
-    ${recs.map((id) => trackRow(TRACKS[id])).join('')}
+    ${recs.map((id) => trackRow(TRACKS[id], { showAbout: true })).join('')}
     <div class="offer">
       <a class="offer-tariff" href="${myUrl}">
         <div class="row">
