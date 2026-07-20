@@ -888,6 +888,19 @@ function renderLibrary() {
         : `<p class="dim small" style="padding:8px 4px 4px">${esc(cat.empty || 'Скоро появится.')}</p>`;
     }
   }
+  if (level() === 'my') {
+    html += `
+    <div class="card soft" style="margin-top:18px">
+      <p class="dim small">Хочешь практики под другие сферы? «${esc(PRICING.full.title)}» открывает все медитации и сублиминалы, а тест можно проходить заново сколько угодно.</p>
+      <a class="btn" href="${BUY_URLS.full}">Открыть всё за ${PRICING.full.price} ₽</a>
+    </div>`;
+  } else if (level() === 'none') {
+    html += `
+    <div class="card soft" style="margin-top:18px">
+      <p class="dim small">Практики открываются после оплаты. Пароль придёт на почту.</p>
+      <a class="btn" href="${BUY_URLS.tariffs}">Выбрать тариф и купить</a>
+    </div>`;
+  }
   html += `<p class="dim small" style="margin-top:18px">Аудио сохраняется в телефон при первом прослушивании — дальше играет и без интернета. Видео-сублиминалы играют по интернету.</p>`;
   return html;
 }
