@@ -869,20 +869,33 @@ function renderLibrary() {
 function renderAccess() {
   const lvl = level();
   const names = { none: 'Доступ не открыт', my: `Тариф «${PRICING.my.title}»`, full: `Тариф «${PRICING.full.title}»` };
+  const codeForm = `
+      <input type="text" id="code-input" placeholder="Пароль из письма" autocomplete="off" />
+      <div id="code-msg" class="msg" role="status"></div>`;
+  let body;
+  if (lvl === 'full') {
+    body = '<p class="dim" style="margin-top:12px">Открыто всё. Хорошего вечера.</p>';
+  } else if (lvl === 'my') {
+    // Набор уже куплен — не предлагаем «выбрать тариф», только апгрейд до полной библиотеки.
+    body = `
+      <p class="dim" style="margin-top:12px">Твой набор открыт — он с тобой навсегда. Хочешь больше — «${esc(PRICING.full.title)}» открывает все практики: медитации и сублиминалы всех тем, включая будущие обновления.</p>
+      <a class="btn" href="${BUY_URLS.full}">Открыть всё за ${PRICING.full.price} ₽</a>
+      <p class="fomo" style="margin-top:18px">🔥 ${esc(FOMO.launch)}</p>
+      <p class="dim small" style="margin-top:18px">После оплаты на почту придёт новый пароль — введи его здесь:</p>
+      ${codeForm}
+      <button class="btn ghost" onclick="applyCode('code-input','code-msg')">Открыть доступ</button>`;
+  } else {
+    body = `
+      <p class="dim" style="margin-top:12px">Пароль приходит на почту после оплаты. Введи его — и практики откроются на этом телефоне.</p>
+      ${codeForm}
+      <button class="btn" onclick="applyCode('code-input','code-msg')">Открыть доступ</button>
+      <p class="fomo" style="margin-top:18px">🔥 ${esc(FOMO.launch)}</p>
+      <a class="btn ghost" href="${BUY_URLS.tariffs}">Выбрать тариф и купить</a>`;
+  }
   return `
     <div class="eyebrow">Доступ</div>
     <h1>${names[lvl]}</h1>
-    ${
-      lvl === 'full'
-        ? '<p class="dim" style="margin-top:12px">Открыто всё. Хорошего вечера.</p>'
-        : `
-      <p class="dim" style="margin-top:12px">Пароль приходит на почту после оплаты. Введи его — и практики откроются на этом телефоне.</p>
-      <input type="text" id="code-input" placeholder="Пароль из письма" autocomplete="off" />
-      <div id="code-msg" class="msg" role="status"></div>
-      <button class="btn" onclick="applyCode('code-input','code-msg')">Открыть доступ</button>
-      <p class="fomo" style="margin-top:18px">🔥 ${esc(FOMO.launch)}</p>
-      <a class="btn ghost" href="${BUY_URLS.tariffs}">Выбрать тариф и купить</a>`
-    }
+    ${body}
     ${installCard()}
     <hr class="divider" />
     <p class="dim small">Вопросы и возврат — напиши нам, отвечает живой человек. Гарантия возврата 14 дней.</p>
