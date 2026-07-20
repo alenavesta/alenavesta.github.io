@@ -1,4 +1,4 @@
-// Скрытый VIP-каталог: «Целостность» (34) + «Проработки» (21).
+// Скрытый VIP-каталог: «Целостность» (34) + «Проработки» (20).
 // Файл грузится динамически только после ввода VIP-пароля.
 // Имя = celo-<первые16 hex ОТ sha256(пароль + соль)>.js — из хэша в data.js имя не вычислить.
 // В data.js / app.js этот курс НЕ упоминается: покупатели 490/1490 его не видят.
@@ -63,5 +63,4 @@ window.VIP_TRACKS = {
   prb_18: { id: 'prb_18', title: '#18 · Автор своей жизни, смелость и решительность', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-f39024a7d6a4.m4a' },
   prb_19: { id: 'prb_19', title: '#19 · Поиск своих талантов и предназначения', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-6c53e5404b22.m4a' },
   prb_20: { id: 'prb_20', title: '#20 · Предание Богу', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-50c62397a3e2.m4a' },
-  prb_21: { id: 'prb_21', title: 'Бонус · Ангельский портал новых энергий', type: 'медитация', category: 'prorabotki', media: 'audio', stream: true, duration: '', about: 'Проработка из курса «Целостность».', file: CELO_BASE + 'prb-f1f6aa5ad526.mp3' },
 };
