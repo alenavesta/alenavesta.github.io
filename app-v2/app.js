@@ -35,6 +35,7 @@ function recommendedIds() {
 }
 
 function hasAccess(trackId) {
+  if (level() === 'vip') return true; // приватный уровень автора — открыто всё, включая скрытый курс
   if (level() === 'full') return true;
   if (level() === 'my') return recommendedIds().includes(trackId);
   return false;
@@ -299,7 +300,8 @@ function play(trackId) {
   media.src = t.file;
   media.play().catch(() => toast(isVideo ? 'Видео пока не загружено' : 'Аудио пока не загружено'));
   // Видео тяжёлые (≈100 МБ) — стримим по сети, в кэш телефона не кладём.
-  if (!isVideo) cacheTrack(t.file);
+  // Треки с stream:true (VIP-курс с Release, cross-origin) тоже не кэшируем.
+  if (!isVideo && !t.stream) cacheTrack(t.file);
   setMediaSession(t);
   openPlayer(t);
 }
@@ -474,6 +476,9 @@ async function cacheTrack(url) {
 
 /* ---------- Доступ по паролю ---------- */
 
+// Соль для имени скрытого VIP-каталога celo-<vk>.js (vk = sha256(пароль + соль)[:16]).
+const VIP_CATALOG_SALT = '::celo-catalog';
+
 async function sha256(text) {
   // Web Crypto доступен только в secure context (HTTPS или localhost).
   // На телефоне по IP-адресу (http://192.168.x.x) его нет — тогда чистый JS.
@@ -582,7 +587,15 @@ async function applyCode(inputId, msgId) {
     msg.className = 'msg err';
     return;
   }
-  store.write({ level: found.level });
+  const patch = { level: found.level };
+  // Для vip имя скрытого каталога = первые 16 hex ОТ sha256(пароль + соль).
+  // Соль публична, но сам пароль (raw) — нет; из открытого в data.js sha256(пароль)
+  // имя каталога вывести нельзя. Запоминаем vk, чтобы при старте подтянуть курс без пароля.
+  if (found.level === 'vip') {
+    patch.vk = (await sha256(raw + VIP_CATALOG_SALT)).slice(0, 16);
+  }
+  store.write(patch);
+  if (found.level === 'vip') await loadVipCatalog(patch.vk);
   msg.textContent = 'Готово. Доступ открыт.';
   msg.className = 'msg ok';
   setTimeout(() => {
@@ -590,6 +603,30 @@ async function applyCode(inputId, msgId) {
     _closePaywallNow();
     go('today');
   }, 900);
+}
+
+// Скрытый VIP-курс: подгружаем каталог celo-<vk>.js динамически и вливаем в TRACKS.
+// В обычном коде приложения курс не упоминается — имя файла восстанавливается только из хэша пароля.
+let vipCatalogLoaded = false;
+function loadVipCatalog(vk) {
+  return new Promise((resolve) => {
+    if (vipCatalogLoaded || window.VIP_TRACKS) {
+      if (window.VIP_TRACKS) Object.assign(TRACKS, window.VIP_TRACKS);
+      vipCatalogLoaded = true;
+      return resolve();
+    }
+    if (!vk) return resolve();
+    const s = document.createElement('script');
+    s.src = `celo-${vk}.js`;
+    s.onload = () => {
+      if (window.VIP_TRACKS) Object.assign(TRACKS, window.VIP_TRACKS);
+      vipCatalogLoaded = true;
+      render();
+      resolve();
+    };
+    s.onerror = () => resolve(); // нет файла/сети — просто не показываем курс
+    document.head.appendChild(s);
+  });
 }
 
 /* ---------- Модалка замка (закрытый трек) ---------- */
@@ -888,6 +925,21 @@ function renderLibrary() {
         : `<p class="dim small" style="padding:8px 4px 4px">${esc(cat.empty || 'Скоро появится.')}</p>`;
     }
   }
+  // Скрытый VIP-раздел — виден только автору (level vip) и только когда каталог загружен.
+  // Название раздела берём из каталога, чтобы в публичном коде приложения его не было.
+  if (level() === 'vip' && window.VIP_TRACKS) {
+    const vipIds = Object.keys(window.VIP_TRACKS);
+    const open = openCats.has('celostnost');
+    const vipTitle = (window.VIP_SECTION && window.VIP_SECTION.title) || 'Закрытый раздел';
+    html += `
+      <button class="cat-head" onclick="toggleCat('celostnost')">
+        <span>${esc(vipTitle)}</span>
+        <span class="cat-meta">${vipIds.length} ${open ? '▴' : '▾'}</span>
+      </button>`;
+    if (open) {
+      html += vipIds.map((id) => trackRow(TRACKS[id], { showAbout: false })).join('');
+    }
+  }
   if (level() === 'my') {
     html += `
     <div class="card soft" style="margin-top:18px">
@@ -907,12 +959,14 @@ function renderLibrary() {
 
 function renderAccess() {
   const lvl = level();
-  const names = { none: 'Доступ не открыт', my: `Тариф «${PRICING.my.title}»`, full: `Тариф «${PRICING.full.title}»` };
+  const names = { none: 'Доступ не открыт', my: `Тариф «${PRICING.my.title}»`, full: `Тариф «${PRICING.full.title}»`, vip: 'VIP-доступ' };
   const codeForm = `
       <input type="text" id="code-input" placeholder="Пароль из письма" autocomplete="off" />
       <div id="code-msg" class="msg" role="status"></div>`;
   let body;
-  if (lvl === 'full') {
+  if (lvl === 'vip') {
+    body = '<p class="dim" style="margin-top:12px">Открыто всё, включая закрытый курс. Хорошего вечера.</p>';
+  } else if (lvl === 'full') {
     body = '<p class="dim" style="margin-top:12px">Открыто всё. Хорошего вечера.</p>';
   } else if (lvl === 'my') {
     // Набор уже куплен — не предлагаем «выбрать тариф», только апгрейд до полной библиотеки.
@@ -1032,6 +1086,12 @@ if ('serviceWorker' in navigator) {
     updateReady = true;
     offerUpdate();
   });
+}
+
+// VIP-автор: если уровень vip и сохранён ключ каталога — подтягиваем скрытый курс молча.
+if (level() === 'vip') {
+  const vk = store.read().vk;
+  if (vk) loadVipCatalog(vk);
 }
 
 // Первый запуск (нет результата квиза) → квиз. Иначе — «Сегодня».
