@@ -358,12 +358,13 @@ function setMediaSession(t) {
 // движется в реальном времени, а не только после паузы.
 function updatePositionState() {
   if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
-  if (!media.duration || !isFinite(media.duration)) return;
+  const dur = media.duration;
+  if (!dur || !isFinite(dur)) return;
   try {
     navigator.mediaSession.setPositionState({
-      duration: media.duration,
-      playbackRate: media.playbackRate,
-      position: media.currentTime,
+      duration: dur,
+      playbackRate: media.playbackRate || 1, // 0 недопустим — иначе setPositionState бросает
+      position: Math.min(Math.max(media.currentTime || 0, 0), dur), // кламп в [0, dur]
     });
   } catch {
     /* некритично */
@@ -395,6 +396,7 @@ function updateRepeatButton() {
   b.setAttribute('aria-pressed', repeatOn ? 'true' : 'false');
 }
 
+let lastPosSync = 0; // троттлинг обновления позиции для системного медиа-виджета
 function onMediaTime(e) {
   if (e.target !== media) return;
   const bar = document.querySelector('.player-bar i');
@@ -402,6 +404,14 @@ function onMediaTime(e) {
   if (!bar || !media.duration) return;
   bar.style.width = `${(media.currentTime / media.duration) * 100}%`;
   time.textContent = `${fmt(media.currentTime)} · ${fmt(media.duration)}`;
+  // Раз в ~секунду шлём системе РЕАЛЬНУЮ позицию: на части устройств ОС не доанимировывает
+  // ползунок между «ключевыми» обновлениями, и он замирает. Чаще каждого тика слать нельзя —
+  // тогда анимация дёргается; ~1 с — баланс точности и плавности.
+  const now = Date.now();
+  if (now - lastPosSync > 900) {
+    lastPosSync = now;
+    updatePositionState();
+  }
 }
 
 function fmt(sec) {
@@ -470,8 +480,8 @@ function updatePlayerButton() {
 }
 
 // Одни и те же обработчики на оба носителя; чужие события отсекаются внутри по e.target.
-// Позицию сообщаем системе в ключевые моменты (старт/пауза/перемотка/смена длительности) —
-// дальше заблокированный экран сам анимирует ползунок. Каждый тик слать нельзя: анимация замирает.
+// Позицию шлём в ключевые моменты (старт/пауза/перемотка/смена длительности) И раз в ~секунду
+// во время игры (см. onMediaTime) — иначе на части устройств ползунок замирает или уезжает в конец.
 for (const el of [audio, video]) {
   el.addEventListener('ended', onMediaEnded);
   el.addEventListener('timeupdate', onMediaTime);
@@ -481,6 +491,14 @@ for (const el of [audio, video]) {
   el.addEventListener('pause', updatePositionState);
   el.addEventListener('seeked', updatePositionState);
   el.addEventListener('durationchange', updatePositionState);
+  // Явно сообщаем системе play/paused: без этого ОС продолжает «крутить» ползунок при паузе
+  // и он уезжает в конец трека.
+  el.addEventListener('play', () => setPlaybackState('playing'));
+  el.addEventListener('pause', () => setPlaybackState('paused'));
+}
+
+function setPlaybackState(s) {
+  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = s;
 }
 
 // Тап по самому видео — пауза/продолжить (привычный жест).
