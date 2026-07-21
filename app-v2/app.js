@@ -283,6 +283,7 @@ audio.preload = 'auto';
 const video = document.getElementById('player-video'); // тег в index.html; скрипт подключён в конце body
 let media = audio; // текущий носитель: audio (медитации) или video (видео-сублиминалы)
 let playingTrack = null;
+let playerCollapsed = false; // «← назад» сворачивает плеер, но трек продолжает играть (см. collapsePlayer)
 let repeatOn = false; // повтор трека по кругу (переключается в плеере, держится всю сессию)
 
 function play(trackId) {
@@ -294,16 +295,37 @@ function play(trackId) {
   }
   if (!media.paused) media.pause();
   playingTrack = t;
+  playerCollapsed = false; // новый трек — плеер разворачиваем
   const isVideo = t.media === 'video';
   media = isVideo ? video : audio;
   document.getElementById('player').classList.toggle('video-mode', isVideo);
   media.src = t.file;
-  media.play().catch(() => toast(isVideo ? 'Видео пока не загружено' : 'Аудио пока не загружено'));
-  // Видео тяжёлые (≈100 МБ) — стримим по сети, в кэш телефона не кладём.
-  // Треки с stream:true (VIP-курс с Release, cross-origin) тоже не кэшируем.
-  if (!isVideo && !t.stream) cacheTrack(t.file);
+  startPlayback(media, isVideo);
+  // Кэширование делает service worker при первой сетевой загрузке (одним скачиванием).
+  // Реальные медитации уже прекэшированы при установке SW — стартуют мгновенно и офлайн.
   setMediaSession(t);
   openPlayer(t);
+  // Плеер живёт на вкладке «Сегодня». Запуск из «Программы»/«Библиотеки» переключает туда.
+  // Переключаем напрямую (доступ к треку уже проверен) — минуя редирект go() в квиз.
+  if (screen !== 'today') {
+    screen = 'today';
+    if (navReady) history.pushState({ screen: 'today' }, '');
+  }
+  render();
+  window.scrollTo(0, 0);
+}
+
+// Аккуратный старт воспроизведения. play() часто отклоняется, пока ничего ещё не буферизовано —
+// это не ошибка, а «данные не готовы». Раньше на это сразу вылезал тост «Аудио пока не загружено».
+// Теперь: не удалось стартовать — ждём готовности (canplay) и пробуем снова; тост показываем
+// только на реальной ошибке медиа (событие error). Для прекэшированных медитаций старт мгновенный.
+function startPlayback(el, isVideo) {
+  const onError = () => toast(isVideo ? 'Видео пока не загружено' : 'Аудио пока не загружено');
+  el.addEventListener('error', onError, { once: true });
+  el.addEventListener('playing', () => el.removeEventListener('error', onError), { once: true });
+  el.play().catch(() => {
+    el.addEventListener('canplay', () => el.play().catch(() => {}), { once: true });
+  });
 }
 
 function setMediaSession(t) {
@@ -357,7 +379,7 @@ function onMediaEnded(e) {
     media.play().catch(() => {});
     return;
   }
-  closePlayer();
+  stopPlayback();
 }
 
 function toggleRepeat() {
@@ -388,9 +410,10 @@ function fmt(sec) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
+// Заполняет содержимое плеера (заголовок, фото/видео-режим, кнопки). Видимость плеера
+// на вкладке «Сегодня» переключает render() → syncPlayer() по наличию playingTrack.
 function openPlayer(t) {
   const el = document.getElementById('player');
-  const wasOpen = el.classList.contains('open');
   el.querySelector('h2').textContent = t.title;
   // Фото трека (если есть): показываем карточкой на экране плеера.
   const cover = document.getElementById('player-cover');
@@ -403,22 +426,36 @@ function openPlayer(t) {
     cover.alt = '';
     el.classList.remove('has-cover');
   }
-  el.classList.add('open');
-  // Плеер — «шаг» в истории браузера: свайп назад закроет его, а не приложение.
-  if (!wasOpen) history.pushState({ layer: 'player', screen }, '');
   updatePlayerButton();
   updateRepeatButton();
 }
 
-// Публичное закрытие — через шаг назад в истории (кнопка «← назад», конец трека).
-function closePlayer() {
-  if (document.getElementById('player').classList.contains('open')) history.back();
+// «← назад»: свернуть плеер, НЕ останавливая трек. На «Сегодня» показывается обычный вид,
+// а сверху — полоска «Сейчас играет» (см. renderToday), по которой плеер разворачивается обратно.
+function collapsePlayer() {
+  playerCollapsed = true;
+  render(); // syncPlayer() скроет развёрнутый плеер, hero покажет полоску «Сейчас играет»
 }
 
-// Фактическое закрытие — вызывается обработчиком истории (popstate).
-function _closePlayerNow() {
-  document.getElementById('player').classList.remove('open');
+// Развернуть плеер обратно (тап по полоске «Сейчас играет»).
+function expandPlayer() {
+  if (!playingTrack) return;
+  playerCollapsed = false;
+  if (screen !== 'today') {
+    screen = 'today';
+    if (navReady) history.pushState({ screen: 'today' }, '');
+  }
+  render();
+  window.scrollTo(0, 0);
+}
+
+// Полная остановка: трек закончился (без повтора). Плеер уходит, «Сегодня» — обычный вид.
+function stopPlayback() {
   if (!media.paused) media.pause();
+  playingTrack = null;
+  media = audio;
+  document.getElementById('player').classList.remove('video-mode', 'has-cover');
+  render();
 }
 
 function togglePlay() {
@@ -475,17 +512,6 @@ document.addEventListener('visibilitychange', () => {
     setMediaSession(playingTrack);
   }
 });
-
-async function cacheTrack(url) {
-  if (!('caches' in window)) return;
-  try {
-    const cache = await caches.open('av-audio-v1');
-    const hit = await cache.match(url);
-    if (!hit) await cache.add(url);
-  } catch {
-    /* нет сети или файла — трек просто не закэшируется */
-  }
-}
 
 /* ---------- Доступ по паролю ---------- */
 
@@ -777,10 +803,6 @@ window.addEventListener('popstate', (e) => {
     _closePaywallNow();
     return;
   }
-  if (document.getElementById('player').classList.contains('open')) {
-    _closePlayerNow();
-    return;
-  }
   const name = e.state && e.state.screen ? e.state.screen : quizResult() ? 'today' : 'quiz';
   go(name, { fromHistory: true });
 });
@@ -870,7 +892,17 @@ function renderToday() {
   const s = streak();
   const doneCount = recs.filter((id) => listened[id]).length;
 
+  // Свёрнутый плеер: трек играет в фоне — показываем полоску, по тапу разворачиваем плеер.
+  const nowPlaying = playingTrack
+    ? `<button class="nowplaying" onclick="expandPlayer()">
+         <span class="np-ico">♪</span>
+         <span class="np-text"><b>Сейчас играет</b><span class="np-title">${esc(playingTrack.title)}</span></span>
+         <span class="np-open">Открыть ▸</span>
+       </button>`
+    : '';
+
   return `
+    ${nowPlaying}
     <div class="eyebrow">Твоя практика на сегодня</div>
     <h1>${greeting()}.</h1>
     <div class="tonight">
@@ -1051,12 +1083,21 @@ const SCREENS = {
 
 function render() {
   document.getElementById('screen').innerHTML = SCREENS[screen]();
+  syncPlayer();
   // Во время прохождения квиза нижнее меню прячем, чтобы не отвлекать.
   const inQuizFlow = screen === 'quiz' && quiz.phase !== 'result';
   document.querySelector('nav').style.display = inQuizFlow ? 'none' : '';
   document.querySelectorAll('nav button').forEach((b) => {
     b.classList.toggle('active', b.dataset.screen === screen || (screen === 'quiz' && b.dataset.screen === 'today'));
   });
+}
+
+// Плеер — главный экран вкладки «Сегодня»: показываем его вместо hero, когда играет трек.
+// На других вкладках плеер скрыт, но звук продолжается (audio/video играют в фоне).
+function syncPlayer() {
+  const showPlayer = screen === 'today' && !!playingTrack && !playerCollapsed;
+  document.getElementById('player').classList.toggle('open', showPlayer);
+  document.getElementById('screen').style.display = showPlayer ? 'none' : '';
 }
 
 function toast(text) {
@@ -1073,7 +1114,7 @@ document.querySelectorAll('nav button').forEach((b) => {
   b.addEventListener('click', () => go(b.dataset.screen));
 });
 
-document.querySelector('.player-close').addEventListener('click', closePlayer);
+document.querySelector('.player-close').addEventListener('click', collapsePlayer);
 document.getElementById('player-toggle').addEventListener('click', togglePlay);
 document.getElementById('player-repeat').addEventListener('click', toggleRepeat);
 document.getElementById('modal-close').addEventListener('click', closePaywall);

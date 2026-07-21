@@ -168,6 +168,60 @@ nav button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px;
 
 .streak b { color: var(--sage); font-weight: 600; }
 
+/* Полоска «Сейчас играет» — свёрнутый плеер (трек продолжает звучать в фоне). */
+.nowplaying {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--amber-deep);
+  border-radius: 999px;
+  padding: 10px 16px;
+  margin-bottom: 22px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.nowplaying .np-ico {
+  font-size: 18px;
+  color: var(--amber);
+  flex: 0 0 auto;
+}
+
+.nowplaying .np-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.nowplaying .np-text b {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.nowplaying .np-title {
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nowplaying .np-open {
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: var(--amber);
+}
+
+.nowplaying:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
 /* ---------- Карточки ---------- */
 
 .card {
@@ -291,17 +345,17 @@ nav button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px;
 
 /* ---------- Плеер ---------- */
 
+/* Плеер — не отдельное окно, а содержимое вкладки «Сегодня»: живёт в той же области,
+   что и #screen, нижнее меню остаётся видимым. Показывается, когда играет трек (класс .open). */
 #player {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 30%, #17222f 0%, var(--bg) 70%);
-  z-index: 50;
+  position: relative;
   display: none;
+  max-width: 480px;
+  margin: 0 auto;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding: 30px 26px calc(30px + env(safe-area-inset-bottom));
+  padding: 40px 22px 110px;
 }
 
 #player.open { display: flex; }
