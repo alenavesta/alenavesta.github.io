@@ -790,10 +790,29 @@ function go(name, opts = {}) {
   // Пока квиз не пройден, «Сегодня» и «Программа» ведут в квиз.
   if ((name === 'today' || name === 'program') && !quizResult()) name = 'quiz';
   screen = name;
+  // Вошли в «Библиотеку» (там видео-сублиминалы) — заранее прогреваем соединение к их хостам,
+  // чтобы к тапу по ролику DNS/TLS уже стояли и видео стартовало почти сразу.
+  if (name === 'library') preconnectMedia();
   // Каждый переход — запись в истории браузера, чтобы свайп назад шагал по экранам.
   if (navReady && !opts.fromHistory) history.pushState({ screen: name }, '');
   render();
   window.scrollTo(0, 0);
+}
+
+// Прогрев соединения к хостам, откуда стримятся видео-сублиминалы (GitHub Releases редиректит
+// на objects.githubusercontent.com). Пересоздаём link'и, т.к. простаивающий сокет мог закрыться —
+// так соединение свежее к моменту запуска ролика. Основная часть задержки видео — как раз DNS/TLS.
+const MEDIA_HOSTS = ['https://objects.githubusercontent.com', 'https://github.com'];
+function preconnectMedia() {
+  for (const href of MEDIA_HOSTS) {
+    const old = document.head.querySelector(`link[data-media][href="${href}"]`);
+    if (old) old.remove();
+    const l = document.createElement('link');
+    l.rel = 'preconnect';
+    l.href = href;
+    l.setAttribute('data-media', '');
+    document.head.appendChild(l);
+  }
 }
 
 // Свайп назад / кнопка назад: сначала закрываем верхний слой (модалка, плеер),

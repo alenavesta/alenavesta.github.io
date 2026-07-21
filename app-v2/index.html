@@ -11,13 +11,19 @@
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Прогрев соединения к хостам видео-сублиминалов (GitHub Releases → objects.*):
+       к моменту запуска ролика DNS/TLS уже установлены, старт быстрее. Повторно прогреваем
+       при входе в «Библиотеку» (app.js → preconnectMedia). -->
+  <link rel="preconnect" href="https://objects.githubusercontent.com" />
+  <link rel="preconnect" href="https://github.com" />
+  <link rel="dns-prefetch" href="https://objects.githubusercontent.com" />
 </head>
 <body>
   <main id="screen" aria-live="polite"></main>
 
   <div id="player" role="dialog" aria-label="Плеер">
     <button class="player-close" aria-label="Свернуть плеер">← назад</button>
-    <video id="player-video" playsinline preload="metadata"></video>
+    <video id="player-video" playsinline preload="auto"></video>
     <div class="halo-wrap">
       <img class="halo-cover" id="player-cover" alt="" />
       <div class="halo"></div>
