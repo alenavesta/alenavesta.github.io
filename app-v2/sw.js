@@ -1,15 +1,14 @@
-// Service worker: оболочка приложения работает офлайн,
-// реальные аудио-медитации прекэшируются при установке (список AUDIO ниже),
-// остальные треки (.wav-заглушки) кэшируются при первой сетевой загрузке.
+// Service worker: оболочка приложения работает офлайн, аудио-медитации стримятся из сети
+// при первом запуске (мгновенный старт, как видео) и параллельно докэшируются — дальше играют
+// из кэша и офлайн. 6 реальных медитаций ещё и прекэшируются в фоне после активации.
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v23'; // v23: аудио стартует мгновенно (прекэш .m4a + Range из кэша)
-const AUDIO_CACHE = 'av-audio-v2';  // v2: прекэш 6 медитаций; бамп заставляет старые установки перекачать
+const SHELL_CACHE = 'av-shell-v24'; // v24: не блокируем активацию прекэшем; аудио стримится+докэшивается
+const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
-// Реальные медитации (.m4a). Прекэшируются в AUDIO_CACHE при install → мгновенный старт и офлайн.
-// AUDIO_CACHE переживает бампы SHELL_CACHE (см. activate), поэтому ~21 МБ качаются один раз на версию
-// аудио-кэша, а не при каждом обновлении оболочки. Заглушки .wav сюда не кладём — они кэшируются лениво.
+// Реальные медитации (.m4a) — прекэшируются в фоне после активации (precacheAudio), не блокируя
+// установку. Заглушки .wav и будущие треки кэшируются лениво при первом запуске (см. respondAudio).
 const AUDIO = [
   './audio/glubokiy-son.m4a',
   './audio/legkoe-utro.m4a',
@@ -41,27 +40,26 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (e) => {
-  // cache: 'reload' — качаем оболочку с сервера напрямую, минуя HTTP-кэш браузера,
-  // иначе в новую версию могут попасть старые файлы.
+  // Активируемся быстро: ждём только лёгкую оболочку. Аудио (~21 МБ) НЕ ждём — иначе установка
+  // нового SW висела бы на загрузке всех медитаций и обновление не «вставало» бы на устройстве.
+  // cache: 'reload' — качаем оболочку с сервера напрямую, минуя HTTP-кэш браузера.
   e.waitUntil(
-    Promise.all([
-      caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })))),
-      // Прекэш медитаций: старый SW продолжает обслуживать страницу, пока эти ~21 МБ докачаются,
-      // поэтому пользователя это не блокирует. addAll упадёт целиком, если хоть один файл недоступен —
-      // ловим ошибку, чтобы недокачанное аудио не срывало установку новой версии оболочки.
-      caches.open(AUDIO_CACHE).then((c) => c.addAll(AUDIO).catch(() => {})),
-    ])
+    caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' }))))
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== SHELL_CACHE && k !== AUDIO_CACHE).map((k) => caches.delete(k)))
-    )
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(keys.filter((k) => k !== SHELL_CACHE && k !== AUDIO_CACHE).map((k) => caches.delete(k)))
+      )
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
+  // Прекэш медитаций — в фоне, не блокируя активацию и fetch-события.
+  precacheAudio();
 });
 
 self.addEventListener('fetch', (e) => {
@@ -71,10 +69,9 @@ self.addEventListener('fetch', (e) => {
   // потоковое видео просит файл кусками (Range), через respondWith это ломается.
   if (url.origin !== location.origin) return;
 
-  // Аудио: отдаём из кэша (в т.ч. по Range — плеер стартует и перематывает мгновенно),
-  // иначе один раз качаем из сети и кладём в кэш. См. respondAudio ниже.
+  // Аудио: из кэша (с поддержкой Range), иначе стрим из сети + докэш в фоне. См. respondAudio.
   if (url.pathname.includes('/audio/')) {
-    e.respondWith(respondAudio(e.request));
+    e.respondWith(respondAudio(e.request, e));
     return;
   }
 
@@ -95,31 +92,22 @@ self.addEventListener('fetch', (e) => {
   );
 });
 
-// Раздача аудио с поддержкой Range.
-// Плеер запрашивает файл кусками (Range: bytes=…) — если такой запрос уйти в сеть,
-// прекэшированный трек скачается заново, а офлайн-воспроизведение сломается. Поэтому
-// нарезаем 206-ответ прямо из кэшированного файла. Нет в кэше — качаем целиком один раз.
-async function respondAudio(request) {
+// Раздача аудио. Есть в кэше → отдаём мгновенно (с нарезкой 206 под Range-запросы плеера).
+// Нет в кэше → стримим напрямую из сети (исходный Range → 206 от сервера, старт как у видео),
+// а полный файл докачиваем в кэш в фоне — следующий запуск и офлайн уже из кэша.
+async function respondAudio(request, event) {
   const cache = await caches.open(AUDIO_CACHE);
-  let full = await cache.match(request.url); // полный файл (ключ — URL без Range)
-  if (!full) {
-    try {
-      const res = await fetch(request.url); // запрашиваем весь файл, а не текущий Range-кусок
-      if (res.ok) {
-        await cache.put(request.url, res.clone());
-        full = res;
-      } else {
-        return fetch(request); // ошибка сервера — отдаём как есть, не кэшируем
-      }
-    } catch {
-      return fetch(request); // нет сети и нет в кэше — пусть решает браузер
-    }
-  }
+  const cached = await cache.match(request.url);
+  if (cached) return sliceIfRange(cached, request);
+  cacheAudioOnce(cache, request.url, event); // докэш в фоне (без гонки с плеером)
+  return fetch(request); // мгновенный стриминг текущего запуска
+}
 
+// 206 из кэшированного полного файла: плеер запрашивает трек кусками (Range) и не умеет
+// стартовать/перематывать, если в ответ на Range прилетает целый файл 200. Поэтому режем сами.
+async function sliceIfRange(full, request) {
   const range = request.headers.get('range');
   if (!range) return full; // обычный запрос — полный файл (200)
-
-  // Range вида "bytes=START-" или "bytes=START-END": режем тело кэшированного ответа.
   const buf = await full.arrayBuffer();
   const total = buf.byteLength;
   const m = /bytes=(\d*)-(\d*)/.exec(range);
@@ -139,4 +127,31 @@ async function respondAudio(request) {
       'Content-Length': String(slice.byteLength),
     },
   });
+}
+
+// Докэш одного файла целиком, но не больше одной загрузки на URL одновременно: плеер шлёт
+// много Range-запросов, без защиты каждый запустил бы отдельную полную скачку того же файла.
+const audioCaching = new Set();
+function cacheAudioOnce(cache, url, event) {
+  if (audioCaching.has(url)) return;
+  audioCaching.add(url);
+  const job = cache
+    .add(url) // add качает весь файл (без Range) → в кэше лежит полный 200
+    .catch(() => {})
+    .finally(() => audioCaching.delete(url));
+  if (event && event.waitUntil) event.waitUntil(job); // держим SW живым до конца докэша
+}
+
+// Фоновый прекэш медитаций после активации: по одному, пропуская уже закэшированные.
+// Идемпотентно — если SW успеют выгрузить на середине, докачается при следующем запуске.
+async function precacheAudio() {
+  try {
+    const cache = await caches.open(AUDIO_CACHE);
+    for (const u of AUDIO) {
+      const hit = await cache.match(new URL(u, self.location).href);
+      if (!hit) await cache.add(u).catch(() => {});
+    }
+  } catch {
+    /* нет доступа к CacheStorage — не критично, сработает ленивый докэш */
+  }
 }
