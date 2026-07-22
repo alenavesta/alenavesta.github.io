@@ -497,12 +497,9 @@
   </div>
 </section>
 
+<script src="checkout.js"></script>
 <script>
 'use strict';
-
-/* Яндекс-Формы оплаты — отдельная форма на каждый тариф (имя, email; после отправки — ссылка на ЮMoney). */
-var FORM_URL_490 = 'https://forms.yandex.ru/u/6a5f96fbf47e730ae63136a1';
-var FORM_URL_1490 = 'https://forms.yandex.ru/u/6a5fa04f4936390a67c66bec';
 
 var THEMES = {
   son: {
@@ -563,13 +560,14 @@ document.querySelectorAll('.sostav').forEach(function (el) {
 /* бонус под тему (гайды: nabory/gaidy/) */
 document.getElementById('bonus-line').textContent = '🎁 ' + THEMES[themeKey].bonus;
 
-/* Кнопки покупки → своя Яндекс-Форма на каждый тариф. Тему передаём в адресе,
-   чтобы видеть в ответах формы, откуда пришёл человек. */
-function formLink(tarif) { return (tarif === 490 ? FORM_URL_490 : FORM_URL_1490) + '?theme=' + themeKey; }
-document.getElementById('btn-500').href = formLink(490);
-document.getElementById('btn-1500').href = formLink(1490);
-document.getElementById('btn-final').href = formLink(490);
-document.getElementById('btn-final-alt').href = formLink(1490);
+/* Кнопки покупки → своя модалка оформления (checkout.js). Тему передаём,
+   чтобы попала в заявку и в письмо: видно, откуда пришёл человек. */
+[['btn-500', 490], ['btn-1500', 1490], ['btn-final', 490], ['btn-final-alt', 1490]].forEach(function (pair) {
+  var el = document.getElementById(pair[0]);
+  if (!el) return;
+  el.setAttribute('href', '#tarify');
+  el.addEventListener('click', function (e) { e.preventDefault(); window.openCheckout(pair[1], themeKey); });
+});
 
 /* появление секций при скролле */
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

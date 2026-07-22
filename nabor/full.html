@@ -125,11 +125,15 @@
   </div>
 </section>
 
+<script src="checkout.js"></script>
 <script>
 'use strict';
-/* Яндекс-Форма оплаты — только тариф 1490. */
-var FORM_URL_1490 = 'https://forms.yandex.ru/u/6a5fa04f4936390a67c66bec';
-document.getElementById('btn-buy').href = FORM_URL_1490 + '?from=app';
+/* Апгрейд-лендинг: только тариф 1490. Кнопка открывает свою модалку оформления. */
+var upTheme = new URLSearchParams(location.search).get('theme') || 'full';
+document.getElementById('btn-buy').addEventListener('click', function (e) {
+  e.preventDefault();
+  window.openCheckout(1490, upTheme);
+});
 </script>
 </body>
 </html>

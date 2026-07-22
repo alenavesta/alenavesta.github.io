@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Спасибо — Практики Алёны Весты</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="logo.svg">
+<style>
+  :root {
+    --bg: #0d1420;
+    --surface: rgba(19, 28, 43, 0.93);
+    --line: #223048;
+    --ink: #f0e7da;
+    --ink-dim: #9ba4b3;
+    --ink-faint: #67728a;
+    --amber: #d9a868;
+    --amber-glow: rgba(217, 168, 104, 0.16);
+    --radius: 20px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--bg) url('bg.svg') center / cover no-repeat fixed;
+    color: var(--ink);
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(rgba(13, 20, 32, 0.55), rgba(13, 20, 32, 0.55));
+  }
+  .card {
+    max-width: 460px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 34px 26px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+  }
+  .logo { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 18px; box-shadow: 0 0 44px 12px var(--amber-glow); }
+  .logo img { width: 100%; height: 100%; border-radius: 50%; display: block; }
+  h1 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-size: 26px; color: var(--amber); margin-bottom: 14px; }
+  p { color: var(--ink-dim); margin-bottom: 14px; }
+  p:last-of-type { margin-bottom: 0; }
+  .steps {
+    text-align: left;
+    background: var(--amber-glow);
+    border-left: 2px solid var(--amber);
+    border-radius: 0 14px 14px 0;
+    padding: 16px 18px;
+    margin: 20px 0 6px;
+  }
+  .steps p { color: var(--ink); margin-bottom: 8px; font-size: 15.5px; }
+  .steps p:last-child { margin-bottom: 0; }
+  .note { font-size: 13.5px; color: var(--ink-faint); margin-top: 18px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><img src="logo.svg" alt="Алёна Веста"></div>
+    <h1>Спасибо! Заявка принята</h1>
+    <p>Как только оплата подтвердится, на указанную почту придёт <b>пароль доступа</b> — обычно в течение пары часов.</p>
+    <div class="steps">
+      <p>1. Проверь почту (и папку «Спам») — там будет письмо с паролем.</p>
+      <p>2. Открой приложение и введи пароль на экране «Доступ».</p>
+      <p>3. Практики откроются на твоём телефоне — доступ навсегда.</p>
+    </div>
+    <p class="note">Если письмо не пришло за пару часов — напиши нам, откроем доступ руками.</p>
+  </div>
+</body>
+</html>
