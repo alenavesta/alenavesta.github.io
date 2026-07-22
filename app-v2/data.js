@@ -210,7 +210,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/perezagruzka.wav', // ЗАГЛУШКА. Целевой: audio/dengi-razreshit-sebe-bolshe.mp3
+    file: 'audio/dengi-razreshit-sebe-bolshe.m4a',
+    cover: 'covers/dengi-razreshit-sebe-bolshe.png',
     note: 'Тематическая. Поднять внутреннюю денежную планку.',
     about: 'Эта медитация для тех, у кого доход годами упирается в невидимый потолок, а внутри звучит «большие деньги не для таких, как я». Она помогает поднять внутреннюю планку и разрешить себе больше. Спокойное ведение без мотивационного нажима возвращает ощущение «мне можно».',
   },
@@ -221,7 +222,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/otpustit-den.wav', // ЗАГЛУШКА. Целевой: audio/dengi-bez-viny.mp3
+    file: 'audio/dengi-bez-viny.m4a',
+    cover: 'covers/dengi-bez-viny.png',
     note: 'Тематическая. Снять сжатие и вину рядом с деньгами.',
     about: 'Эта медитация для тех, у кого при мысли назвать цену или попросить больше внутри всё сжимается, а деньги ощущаются опасными. Она помогает снять это сжатие и вину и почувствовать, что можно иметь больше, оставаясь собой. Дыхание и внимание к телу возвращают спокойствие рядом с деньгами.',
   },
@@ -232,7 +234,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/glubokiy-son.wav', // ЗАГЛУШКА. Целевой: audio/dengi-spokoynye-dengi.mp3
+    file: 'audio/dengi-spokoynye-dengi.m4a',
+    cover: 'covers/dengi-spokoynye-dengi.png',
     note: 'Тематическая. Смотреть на деньги спокойно, без тревоги.',
     about: 'Эта медитация для тех, кто избегает считать и планировать, потому что смотреть на деньги тревожно. Она помогает смотреть на цифры спокойно и относиться к деньгам как к навыку внимания, а не экзамену. Шаг за шагом уходит паника, из-за которой деньги утекали на автомате.',
   },
