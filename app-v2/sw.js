@@ -5,7 +5,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v31'; // v31: юр-ссылки в «Доступе» открываются в том же окне
+const SHELL_CACHE = 'av-shell-v32'; // v32: legal/ перенесён внутрь app-v2 (в scope PWA, без адресной строки)
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
 const SHELL = [
@@ -31,6 +31,11 @@ const SHELL = [
   './covers/dengi-razreshit-sebe-bolshe.png',
   './covers/dengi-bez-viny.png',
   './covers/dengi-spokoynye-dengi.png',
+  './legal/legal.css',
+  './legal/privacy.html',
+  './legal/oferta.html',
+  './legal/soglasie.html',
+  './legal/kontakty.html',
 ];
 
 self.addEventListener('install', (e) => {

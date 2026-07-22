@@ -1104,13 +1104,13 @@ function renderAccess() {
     ${body}
     ${installCard()}
     <hr class="divider" />
-    <p class="dim small">Вопросы и возврат — <a href="../legal/kontakty.html">напиши нам</a>, отвечает живой человек. Гарантия возврата 14 дней.</p>
+    <p class="dim small">Вопросы и возврат — <a href="legal/kontakty.html">напиши нам</a>, отвечает живой человек. Гарантия возврата 14 дней.</p>
     <p class="dim small" style="margin-top:14px">Это практики для спокойствия и сна. Они не заменяют врача и не лечат болезни.</p>
     <p class="dim small" style="margin-top:14px">
-      <a href="../legal/oferta.html">Оферта</a> ·
-      <a href="../legal/privacy.html">Политика</a> ·
-      <a href="../legal/soglasie.html">Согласие</a> ·
-      <a href="../legal/kontakty.html">Контакты</a>
+      <a href="legal/oferta.html">Оферта</a> ·
+      <a href="legal/privacy.html">Политика</a> ·
+      <a href="legal/soglasie.html">Согласие</a> ·
+      <a href="legal/kontakty.html">Контакты</a>
     </p>`;
 }
 

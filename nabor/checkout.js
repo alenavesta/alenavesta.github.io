@@ -87,9 +87,9 @@
           '</label>' +
           '<div class="co-error" hidden></div>' +
           '<label class="co-consent"><input type="checkbox" class="co-agree">' +
-            '<span>Соглашаюсь на <a href="../legal/soglasie.html" target="_blank" rel="noopener">обработку персональных данных</a> ' +
-            'и принимаю <a href="../legal/oferta.html" target="_blank" rel="noopener">оферту</a> ' +
-            'и <a href="../legal/privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a>.</span></label>' +
+            '<span>Соглашаюсь на <a href="../app-v2/legal/soglasie.html" target="_blank" rel="noopener">обработку персональных данных</a> ' +
+            'и принимаю <a href="../app-v2/legal/oferta.html" target="_blank" rel="noopener">оферту</a> ' +
+            'и <a href="../app-v2/legal/privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a>.</span></label>' +
           '<button class="co-btn co-submit" type="submit">Перейти к оплате</button>' +
         '</form>' +
       '</div>' +
