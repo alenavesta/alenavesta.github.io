@@ -4,7 +4,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v26'; // v26: ползунок на заблокированном экране двигается (периодич. позиция + playbackState)
+const SHELL_CACHE = 'av-shell-v27'; // v27: новая медитация «Мой новый сон» (аудио + фото)
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
 // Реальные медитации (.m4a) — прекэшируются в фоне после активации (precacheAudio), не блокируя
@@ -13,6 +13,7 @@ const AUDIO = [
   './audio/glubokiy-son.m4a',
   './audio/legkoe-utro.m4a',
   './audio/mini-usnut-za-10-minut.m4a',
+  './audio/moy-novyy-son.m4a',
   './audio/otpustit-den.m4a',
   './audio/spokoynoe-zavtra.m4a',
   './audio/tihiy-um.m4a',
@@ -37,6 +38,7 @@ const SHELL = [
   './covers/glubokiy-son.png',
   './covers/spokoynoe-zavtra.png',
   './covers/legkoe-utro.png',
+  './covers/moy-novyy-son.png',
 ];
 
 self.addEventListener('install', (e) => {
