@@ -1,0 +1,102 @@
+/* Общий стиль юридических страниц alenavesta. Тёмная тема бренда, мобильный. */
+:root {
+  --bg: #070b12;
+  --surface: #131c2b;
+  --line: #223048;
+  --ink: #f0e7da;
+  --ink-dim: #9ba4b3;
+  --ink-faint: #67728a;
+  --amber: #d9a868;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--ink-dim);
+  text-decoration: none;
+  font-size: 14.5px;
+}
+.back:hover { color: var(--amber); }
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--amber);
+  margin: 0 0 6px;
+}
+
+h2 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 30px 0 10px;
+  color: var(--ink);
+}
+
+.updated {
+  color: var(--ink-faint);
+  font-size: 13.5px;
+  margin: 0 0 24px;
+}
+
+p, li { color: var(--ink); }
+p { margin: 0 0 12px; }
+
+ul, ol { margin: 0 0 14px; padding-left: 22px; }
+li { margin-bottom: 6px; }
+
+a { color: var(--amber); }
+
+.dim { color: var(--ink-dim); }
+.small { font-size: 14px; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 30px 0;
+}
+
+.foot {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-dim);
+  font-size: 14.5px;
+}
+.foot strong { color: var(--ink); font-weight: 600; }
+
+/* Плейсхолдеры, которые нужно заменить перед публикацией, подсвечены —
+   чтобы не забыть. После заполнения класс .todo можно убрать. */
+.todo {
+  background: rgba(217, 168, 104, .16);
+  border-bottom: 1px dashed var(--amber);
+  padding: 0 3px;
+  border-radius: 3px;
+}

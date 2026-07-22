@@ -59,6 +59,10 @@
     '.co-btn:hover{background:#e4b87c;}',
     '.co-btn:disabled{opacity:.6;cursor:default;}',
     '.co-legal{margin-top:14px;text-align:center;font-size:12.5px;color:var(--ink-faint,#67728a);}',
+    '.co-consent{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;',
+    'font-size:12.5px;line-height:1.5;color:var(--ink-faint,#67728a);text-align:left;cursor:pointer;}',
+    '.co-consent input{flex:0 0 auto;width:18px;height:18px;margin-top:1px;accent-color:var(--amber,#d9a868);cursor:pointer;}',
+    '.co-consent a{color:var(--amber,#d9a868);}',
     '.co-loading{text-align:center;padding:34px 6px;}',
     '.co-loading p{color:var(--ink-dim,#9ba4b3);margin-top:8px;}',
     '.co-spinner{width:40px;height:40px;margin:0 auto 18px;border:3px solid var(--line,#223048);',
@@ -82,8 +86,11 @@
             '<input class="co-email" type="email" name="email" autocomplete="email" inputmode="email" required>' +
           '</label>' +
           '<div class="co-error" hidden></div>' +
+          '<label class="co-consent"><input type="checkbox" class="co-agree">' +
+            '<span>Соглашаюсь на <a href="../legal/soglasie.html" target="_blank" rel="noopener">обработку персональных данных</a> ' +
+            'и принимаю <a href="../legal/oferta.html" target="_blank" rel="noopener">оферту</a> ' +
+            'и <a href="../legal/privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a>.</span></label>' +
           '<button class="co-btn co-submit" type="submit">Перейти к оплате</button>' +
-          '<p class="co-legal">Нажимая кнопку, ты соглашаешься на обработку данных для оформления доступа.</p>' +
         '</form>' +
       '</div>' +
       '<div class="co-step-loading co-loading" hidden>' +
@@ -93,7 +100,7 @@
     '</div>';
 
   /* ---- собираем модалку в DOM один раз ---- */
-  var overlay, elTitle, elFormStep, elLoadStep, elForm, elName, elEmail, elError, elSubmit;
+  var overlay, elTitle, elFormStep, elLoadStep, elForm, elName, elEmail, elError, elSubmit, elAgree;
 
   function build() {
     var style = document.createElement('style');
@@ -113,6 +120,7 @@
     elEmail = overlay.querySelector('.co-email');
     elError = overlay.querySelector('.co-error');
     elSubmit = overlay.querySelector('.co-submit');
+    elAgree = overlay.querySelector('.co-agree');
 
     overlay.querySelector('.co-close').addEventListener('click', close);
     overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
@@ -130,6 +138,7 @@
     elFormStep.hidden = false;
     elLoadStep.hidden = true;
     elSubmit.disabled = false;
+    elAgree.checked = false;
     overlay.classList.add('open');
     setTimeout(function () { try { elName.focus(); } catch (e) {} }, 60);
   }
@@ -183,6 +192,7 @@
     var email = elEmail.value.trim();
     if (name.length < 2) { showError('Впиши, пожалуйста, имя'); elName.focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { showError('Проверь адрес почты'); elEmail.focus(); return; }
+    if (!elAgree.checked) { showError('Отметь согласие на обработку данных'); return; }
     elError.hidden = true;
     elSubmit.disabled = true;
 
@@ -194,7 +204,9 @@
       tariff: TARIFFS[currentTariff].price,
       theme: currentTheme,
       orderId: orderId,
-      page: location.pathname
+      page: location.pathname,
+      consent: true,
+      consentAt: new Date().toISOString()
     };
 
     // экран «Готовим ссылку…»
