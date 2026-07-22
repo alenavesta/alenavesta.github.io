@@ -1,23 +1,12 @@
 // Service worker: оболочка приложения работает офлайн, аудио-медитации стримятся из сети
-// при первом запуске (мгновенный старт, как видео) и параллельно докэшируются — дальше играют
-// из кэша и офлайн. 6 реальных медитаций ещё и прекэшируются в фоне после активации.
+// при первом запуске (мгновенный старт, как видео) и докэшируется ТОЛЬКО тот трек, который
+// пользователь запустил, — дальше он играет из кэша и офлайн. Остальные медитации НЕ качаются
+// заранее: иначе фоновая загрузка всех файлов забивает канал и запуск нажатого трека тормозит.
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v28'; // v28: реальные записи ветки «Деньги» (аудио + фото вместо заглушек)
+const SHELL_CACHE = 'av-shell-v29'; // v29: убран прекэш всех медитаций — качается только запущенный трек
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
-
-// Реальные медитации (.m4a) — прекэшируются в фоне после активации (precacheAudio), не блокируя
-// установку. Заглушки .wav и будущие треки кэшируются лениво при первом запуске (см. respondAudio).
-const AUDIO = [
-  './audio/glubokiy-son.m4a',
-  './audio/legkoe-utro.m4a',
-  './audio/mini-usnut-za-10-minut.m4a',
-  './audio/moy-novyy-son.m4a',
-  './audio/otpustit-den.m4a',
-  './audio/spokoynoe-zavtra.m4a',
-  './audio/tihiy-um.m4a',
-];
 
 const SHELL = [
   './',
@@ -63,8 +52,7 @@ self.addEventListener('activate', (e) => {
       )
       .then(() => self.clients.claim())
   );
-  // Прекэш медитаций — в фоне, не блокируя активацию и fetch-события.
-  precacheAudio();
+  // Медитации заранее НЕ качаем — только тот трек, что пользователь запустит (см. respondAudio).
 });
 
 self.addEventListener('fetch', (e) => {
@@ -140,23 +128,11 @@ const audioCaching = new Set();
 function cacheAudioOnce(cache, url, event) {
   if (audioCaching.has(url)) return;
   audioCaching.add(url);
-  const job = cache
-    .add(url) // add качает весь файл (без Range) → в кэше лежит полный 200
+  // Пауза перед докачкой: даём плееру сначала набрать буфер и стартовать мгновенно, чтобы полная
+  // загрузка файла в кэш не конкурировала со стримом за канал в первые секунды воспроизведения.
+  const job = new Promise((r) => setTimeout(r, 4000))
+    .then(() => cache.add(url)) // add качает весь файл (без Range) → в кэше лежит полный 200
     .catch(() => {})
     .finally(() => audioCaching.delete(url));
   if (event && event.waitUntil) event.waitUntil(job); // держим SW живым до конца докэша
-}
-
-// Фоновый прекэш медитаций после активации: по одному, пропуская уже закэшированные.
-// Идемпотентно — если SW успеют выгрузить на середине, докачается при следующем запуске.
-async function precacheAudio() {
-  try {
-    const cache = await caches.open(AUDIO_CACHE);
-    for (const u of AUDIO) {
-      const hit = await cache.match(new URL(u, self.location).href);
-      if (!hit) await cache.add(u).catch(() => {});
-    }
-  } catch {
-    /* нет доступа к CacheStorage — не критично, сработает ленивый докэш */
-  }
 }

@@ -301,8 +301,8 @@ function play(trackId) {
   document.getElementById('player').classList.toggle('video-mode', isVideo);
   media.src = t.file;
   startPlayback(media, isVideo);
-  // Кэширование делает service worker при первой сетевой загрузке (одним скачиванием).
-  // Реальные медитации уже прекэшированы при установке SW — стартуют мгновенно и офлайн.
+  // Трек стримится из сети с мгновенным стартом; service worker докэширует В КЭШ только этот
+  // запущенный файл (см. sw.js respondAudio) — со второго раза и офлайн играет из кэша.
   setMediaSession(t);
   openPlayer(t);
   // Плеер живёт на вкладке «Сегодня». Запуск из «Программы»/«Библиотеки» переключает туда.
