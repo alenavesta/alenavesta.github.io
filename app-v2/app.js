@@ -299,6 +299,9 @@ let repeatOn = false; // повтор трека по кругу (переклю
 function play(trackId) {
   const t = TRACKS[trackId];
   if (!t) return;
+  // Тап по уже играющему треку (кнопка/строка в списке или большая кнопка «Сегодня») —
+  // не рестарт с нуля, а пауза/продолжение прямо на месте.
+  if (playingTrack && playingTrack.id === trackId) { togglePlay(); return; }
   if (!hasAccess(trackId)) {
     openPaywall(trackId);
     return;
@@ -485,8 +488,12 @@ function togglePlay() {
 }
 
 function updatePlayerButton() {
+  const icon = media.paused ? '▶' : '❚❚';
   const b = document.getElementById('player-toggle');
-  if (b) b.textContent = media.paused ? '▶' : '❚❚';
+  if (b) b.textContent = icon;
+  // Мини-кнопка играющего трека в списках (Библиотека/Программа/набор) — держим в синхроне,
+  // ведь пауза/резюм могут прийти без render() (плеер, локскран, клавиши, медиа-виджет).
+  document.querySelectorAll('[data-playing-toggle]').forEach((el) => { el.textContent = icon; });
 }
 
 // Одни и те же обработчики на оба носителя; чужие события отсекаются внутри по e.target.
@@ -936,6 +943,7 @@ function trackRow(t, { showAbout = false } = {}) {
   const locked = !hasAccess(t.id);
   const heard = !!listenedMap()[t.id];
   const aboutOpen = openAbout.has(t.id);
+  const isCurrent = !!(playingTrack && playingTrack.id === t.id); // трек играет/на паузе прямо сейчас
   // Тап по названию/строке запускает трек (или показывает замок) — не только круглая кнопка.
   const rowAction = locked ? `openPaywall('${t.id}')` : `play('${t.id}')`;
   return `
@@ -950,7 +958,9 @@ function trackRow(t, { showAbout = false } = {}) {
         ${
           locked
             ? `<button class="lock-btn" aria-label="Открыть доступ: ${esc(t.title)}" onclick="openPaywall('${t.id}')">🔒</button>`
-            : `<button class="play-mini" aria-label="Слушать: ${esc(t.title)}" onclick="play('${t.id}')">▶</button>`
+            : isCurrent
+              ? `<button class="play-mini playing" data-playing-toggle aria-label="Пауза или продолжить: ${esc(t.title)}" onclick="play('${t.id}')">${media.paused ? '▶' : '❚❚'}</button>`
+              : `<button class="play-mini" aria-label="Слушать: ${esc(t.title)}" onclick="play('${t.id}')">▶</button>`
         }
       </div>
       ${
