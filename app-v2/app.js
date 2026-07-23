@@ -81,6 +81,12 @@ function streak() {
 
 let quiz = { phase: 'intro', branch: null, step: 0, answers: [] };
 
+// Снимок фазы квиза для истории браузера. Каждый шаг вперёд по квизу пишет такое состояние,
+// и свайп/кнопка «назад» шагают по вопросам, а не выходят из приложения (см. popstate).
+function quizState() {
+  return { screen: 'quiz', qphase: quiz.phase, qbranch: quiz.branch, qstep: quiz.step };
+}
+
 function quizStart() {
   quiz = { phase: 'intro', branch: null, step: 0, answers: [] };
   go('quiz');
@@ -89,6 +95,7 @@ function quizStart() {
 function quizFork() {
   quiz.phase = 'fork';
   render();
+  if (navReady) history.pushState(quizState(), '');
 }
 
 function quizBranch(branch) {
@@ -97,6 +104,7 @@ function quizBranch(branch) {
   quiz.answers = [];
   quiz.phase = 'question';
   render();
+  if (navReady) history.pushState(quizState(), '');
 }
 
 function quizAnswer(qIndex, t) {
@@ -105,6 +113,7 @@ function quizAnswer(qIndex, t) {
   if (qIndex + 1 < branch.questions.length) {
     quiz.step = qIndex + 1;
     render();
+    if (navReady) history.pushState(quizState(), '');
   } else {
     quiz.phase = 'counting';
     render();
@@ -112,13 +121,10 @@ function quizAnswer(qIndex, t) {
   }
 }
 
+// Кнопка «← Назад» = тот же шаг назад, что и системный свайп: отдаём управление истории,
+// а фактический возврат к прошлой фазе делает обработчик popstate.
 function quizBack() {
-  if (quiz.step === 0) {
-    quiz.phase = 'fork';
-  } else {
-    quiz.step -= 1;
-  }
-  render();
+  history.back();
 }
 
 function quizWinner() {
@@ -133,6 +139,9 @@ function quizWinner() {
 }
 
 function quizFinish() {
+  // Человек мог свайпнуть назад за 1.5 с анимации «Считаю…» — тогда фаза уже не counting,
+  // и отложенный таймер не должен перепрыгивать вперёд на результат.
+  if (quiz.phase !== 'counting') return;
   const type = quizWinner();
   const key = `${quiz.branch}.${type}`;
   store.write({
@@ -141,6 +150,7 @@ function quizFinish() {
   });
   quiz.phase = 'result';
   render();
+  if (navReady) history.pushState(quizState(), '');
 }
 
 const QUIZ_TOTAL = 7; // развилка + 6 вопросов
@@ -812,7 +822,8 @@ function go(name, opts = {}) {
   // чтобы к тапу по ролику DNS/TLS уже стояли и видео стартовало почти сразу.
   if (name === 'library') preconnectMedia();
   // Каждый переход — запись в истории браузера, чтобы свайп назад шагал по экранам.
-  if (navReady && !opts.fromHistory) history.pushState({ screen: name }, '');
+  // Для квиза несём и его фазу, чтобы возврат в квиз попадал на нужный шаг.
+  if (navReady && !opts.fromHistory) history.pushState(name === 'quiz' ? quizState() : { screen: name }, '');
   render();
   window.scrollTo(0, 0);
 }
@@ -840,7 +851,18 @@ window.addEventListener('popstate', (e) => {
     _closePaywallNow();
     return;
   }
-  const name = e.state && e.state.screen ? e.state.screen : quizResult() ? 'today' : 'quiz';
+  const st = e.state;
+  // Возврат внутрь квиза: восстанавливаем сохранённую фазу — шаг назад по вопросам, не выход.
+  if (st && st.screen === 'quiz') {
+    quiz.phase = st.qphase || 'intro';
+    quiz.branch = st.qbranch || null;
+    quiz.step = st.qstep || 0;
+    screen = 'quiz';
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  const name = st && st.screen ? st.screen : quizResult() ? 'today' : 'quiz';
   go(name, { fromHistory: true });
 });
 
@@ -1165,6 +1187,28 @@ document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') closePaywall();
 });
 
+/* ---------- Клавиатура не должна перекрывать поля ---------- */
+// Выехавшая клавиатура уменьшает visual-viewport, но фиксированная модалка привязана к
+// layout-viewport и остаётся под клавиатурой. Пишем высоту клавиатуры в --kb — CSS модалки
+// поднимает нижний лист над ней (style.css: #modal / .modal-card).
+(function trackKeyboard() {
+  const vv = window.visualViewport;
+  if (!vv) return; // старые браузеры без API — остаёмся как было, без регресса
+  const update = () => {
+    const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--kb', kb + 'px');
+  };
+  vv.addEventListener('resize', update);
+  vv.addEventListener('scroll', update);
+  update();
+})();
+
+// Тап по полю пароля в модалке: докручиваем поле в центр видимой зоны (над клавиатурой).
+document.getElementById('modal').addEventListener('focusin', (e) => {
+  if (e.target.tagName !== 'INPUT') return;
+  setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
+});
+
 /* ---------- Автообновление приложения ---------- */
 // Новая версия сайта = новый sw.js (бамп av-shell-vN). Браузер скачивает её в фоне,
 // а человеку показываем плашку «Вышло обновление» — сам решает, обновить сейчас или позже.
@@ -1230,5 +1274,6 @@ if (!quizResult()) {
   go('today');
 }
 // Стартовый экран — первая запись в истории; дальше go() добавляет по записи на переход.
-history.replaceState({ screen }, '');
+// Для квиза несём и фазу, чтобы первый шаг назад из квиза был корректным.
+history.replaceState(screen === 'quiz' ? quizState() : { screen }, '');
 navReady = true;

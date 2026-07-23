@@ -4,7 +4,7 @@
   "description": "Аудио-практики для спокойного сна: 7 вечеров и 21 день. Включи перед сном — дальше всё само.",
   "lang": "ru",
   "start_url": "./index.html",
-  "scope": "./",
+  "scope": "../",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0d1420",

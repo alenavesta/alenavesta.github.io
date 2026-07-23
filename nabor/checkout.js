@@ -36,12 +36,14 @@
   /* ---- стили модалки (используем токены лендинга, с запасными значениями) ---- */
   var CSS = [
     '.co-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;',
-    'padding:20px;background:rgba(7,11,18,.74);backdrop-filter:blur(4px);}',
+    // var(--kb) — высота клавиатуры (см. trackKeyboard): поднимает карточку над клавиатурой.
+    'padding:20px 20px calc(20px + var(--kb,0px));background:rgba(7,11,18,.74);backdrop-filter:blur(4px);}',
     '.co-overlay.open{display:flex;}',
     '.co-card{position:relative;width:100%;max-width:420px;background:var(--surface,#131c2b);',
     'border:1px solid var(--line,#223048);border-radius:var(--radius,20px);padding:26px 22px;',
     'color:var(--ink,#f0e7da);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;',
-    'max-height:92vh;overflow-y:auto;}',
+    // Ужимаем карточку до видимой над клавиатурой области — галка согласия и кнопка доступны прокруткой.
+    'max-height:calc(100vh - var(--kb,0px) - 40px);overflow-y:auto;}',
     '.co-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--ink-faint,#67728a);',
     'font-size:22px;line-height:1;cursor:pointer;padding:4px;}',
     '.co-eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint,#67728a);margin-bottom:8px;}',
@@ -126,6 +128,26 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     elForm.addEventListener('submit', onSubmit);
+
+    // Клавиатура не должна перекрывать форму: высоту клавиатуры пишем в --kb (её читает CSS
+    // .co-overlay / .co-card), а фокус на поле докручиваем в центр видимой зоны.
+    trackKeyboard();
+    overlay.addEventListener('focusin', function (e) {
+      if (!e.target || (e.target.tagName !== 'INPUT')) return;
+      setTimeout(function () { try { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {} }, 100);
+    });
+  }
+
+  function trackKeyboard() {
+    var vv = window.visualViewport;
+    if (!vv) return; // старые браузеры без API — остаёмся как было
+    function update() {
+      var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      document.documentElement.style.setProperty('--kb', kb + 'px');
+    }
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
   }
 
   /* ---- открыть / закрыть ---- */
