@@ -19,6 +19,13 @@ const store = {
   },
 };
 
+/* ---------- Аналитика (Яндекс.Метрика) ---------- */
+const YM_ID = 110967310;
+// Безопасная отправка цели: если счётчик ещё не загрузился или заблокирован — тихо пропускаем.
+function ymGoal(name, params) {
+  try { if (window.ym) ym(YM_ID, 'reachGoal', name, params || {}); } catch (e) {}
+}
+
 function level() {
   const l = store.read().level;
   return ACCESS_LEVELS.includes(l) ? l : 'none';
@@ -89,6 +96,7 @@ function quizState() {
 
 function quizStart() {
   quiz = { phase: 'intro', branch: null, step: 0, answers: [] };
+  ymGoal('quiz_start');
   go('quiz');
 }
 
@@ -148,6 +156,7 @@ function quizFinish() {
     quiz: { branch: quiz.branch, type, at: todayISO() },
     recommended: QUIZ_RECOMMEND[key] || [],
   });
+  ymGoal('quiz_done', { theme: quiz.branch, type: type });
   quiz.phase = 'result';
   render();
   if (navReady) history.pushState(quizState(), '');
@@ -261,7 +270,7 @@ function renderOffer(result) {
     <p class="dim small" style="margin-top:4px">Подобраны под твоё корневое убеждение — слушать можно в любом порядке.</p>
     ${recs.map((id) => trackRow(TRACKS[id], { showAbout: true })).join('')}
     <div class="offer">
-      <a class="offer-tariff" href="${myUrl}">
+      <a class="offer-tariff" href="${myUrl}" onclick="ymGoal('buy_click',{tariff:'my',theme:'${theme}'})">
         <div class="row">
           <div class="grow">
             <div class="track-title">${esc(PRICING.my.title)}</div>
@@ -270,7 +279,7 @@ function renderOffer(result) {
           <div class="price"><s>${PRICING.my.oldPrice} ₽</s> <b>${PRICING.my.price} ₽</b></div>
         </div>
       </a>
-      <a class="offer-tariff best" href="${fullUrl}">
+      <a class="offer-tariff best" href="${fullUrl}" onclick="ymGoal('buy_click',{tariff:'full',theme:'${theme}'})">
         <div class="row">
           <div class="grow">
             <div class="track-title">${esc(PRICING.full.title)} <span class="badge badge-amber">выгоднее</span></div>
@@ -281,7 +290,7 @@ function renderOffer(result) {
       </a>
       <p class="fomo">🔥 ${esc(FOMO.launch)}</p>
       <p class="fomo">🎁 ${esc(FOMO.bonusByTheme[theme] || FOMO.bonus)}</p>
-      <a class="btn" href="${myUrl}">${esc(result ? result.cta : 'Выбрать тариф и купить')}</a>
+      <a class="btn" href="${myUrl}" onclick="ymGoal('buy_click',{tariff:'my',theme:'${theme}'})">${esc(result ? result.cta : 'Выбрать тариф и купить')}</a>
       <button class="btn ghost" onclick="go('access')">У меня уже есть пароль</button>
     </div>`;
 }
@@ -1314,6 +1323,21 @@ if (level() === 'vip') {
   const vk = store.read().vk;
   if (vk) loadVipCatalog(vk);
 }
+
+// UTM с входящей ссылки → в состояние. Тот же origin, что и nabor/, поэтому checkout.js
+// читает этот же localStorage при оплате и кладёт источник в заявку. Пишем один раз за визит.
+(function captureUTM() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    const utm = {};
+    keys.forEach((k) => { const v = p.get(k); if (v) utm[k] = v; });
+    if (Object.keys(utm).length) {
+      utm.at = new Date().toISOString();
+      store.write({ utm });
+    }
+  } catch (e) {}
+})();
 
 // Первый запуск (нет результата квиза) → квиз. Иначе — «Сегодня».
 if (!quizResult()) {

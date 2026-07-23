@@ -33,6 +33,28 @@
   var currentTariff = 490;
   var currentTheme = 'son';
 
+  /* ---- аналитика + источник трафика ---- */
+  var YM_ID = 110967310;
+  function ymGoal(name, params) {
+    try { if (window.ym) ym(YM_ID, 'reachGoal', name, params || {}); } catch (e) {}
+  }
+  // UTM: сначала из общего localStorage (его пишет app-v2 на входе, тот же origin),
+  // затем добиваем прямыми параметрами адреса — на случай прямого захода на лендинг.
+  function readUTM() {
+    var utm = {};
+    try {
+      var st = JSON.parse(localStorage.getItem('av-state') || '{}');
+      if (st && st.utm) utm = st.utm;
+    } catch (e) {}
+    try {
+      var p = new URLSearchParams(location.search);
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) {
+        var v = p.get(k); if (v) utm[k] = v;
+      });
+    } catch (e) {}
+    return utm;
+  }
+
   /* ---- стили модалки (используем токены лендинга, с запасными значениями) ---- */
   var CSS = [
     '.co-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;',
@@ -162,6 +184,7 @@
     elSubmit.disabled = false;
     elAgree.checked = false;
     overlay.classList.add('open');
+    ymGoal('checkout_open', { tariff: TARIFFS[currentTariff].price, theme: currentTheme });
     setTimeout(function () { try { elName.focus(); } catch (e) {} }, 60);
   }
 
@@ -220,6 +243,7 @@
 
     var orderId = makeOrderId();
     var payUrl = yoomoneyUrl(currentTariff, orderId);
+    var utm = readUTM();
     var lead = {
       name: name,
       email: email,
@@ -227,9 +251,15 @@
       theme: currentTheme,
       orderId: orderId,
       page: location.pathname,
+      utm_source: utm.utm_source || '',
+      utm_medium: utm.utm_medium || '',
+      utm_campaign: utm.utm_campaign || '',
+      utm_content: utm.utm_content || '',
+      utm_term: utm.utm_term || '',
       consent: true,
       consentAt: new Date().toISOString()
     };
+    ymGoal('checkout_submit', { tariff: TARIFFS[currentTariff].price, theme: currentTheme });
 
     // экран «Готовим ссылку…»
     elFormStep.hidden = true;
