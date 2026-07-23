@@ -5,7 +5,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v38'; // v38: Яндекс.Метрика + цели воронки + UTM-атрибуция
+const SHELL_CACHE = 'av-shell-v39'; // v39: реальные записи ветки «Отношения» (аудио стерео + фото вместо заглушек)
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
 const SHELL = [
@@ -34,6 +34,9 @@ const SHELL = [
   './covers/zdorovie-prinyat-telo.png',
   './covers/zdorovie-otpustit-obidy.png',
   './covers/zdorovie-doveryat-telu.png',
+  './covers/otnosheniya-prostit-sebya.png',
+  './covers/otnosheniya-pravo-poluchat.png',
+  './covers/otnosheniya-bezopasnaya-blizost.png',
   './legal/legal.css',
   './legal/privacy.html',
   './legal/oferta.html',

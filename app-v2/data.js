@@ -178,7 +178,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/vernut-pokoy.wav', // ЗАГЛУШКА. Целевой: audio/otnosheniya-prostit-sebya.mp3
+    file: 'audio/otnosheniya-prostit-sebya.m4a',
+    cover: 'covers/otnosheniya-prostit-sebya.png',
     note: 'Тематическая. Перестать винить себя и встать на свою сторону.',
     about: 'Эта медитация для тех, кто винит себя за любой конфликт и меряет себя строже, чем кого угодно. Она помогает перестать быть себе прокурором и встать на свою сторону. Бережное ведение возвращает тепло к себе вместо вечного «дело во мне».',
   },
@@ -189,7 +190,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/tihiy-um.wav', // ЗАГЛУШКА. Целевой: audio/otnosheniya-pravo-poluchat.mp3
+    file: 'audio/otnosheniya-pravo-poluchat.m4a',
+    cover: 'covers/otnosheniya-pravo-poluchat.png',
     note: 'Тематическая. Принимать заботу, не отрабатывая её.',
     about: 'Эта медитация для тех, кто привык заслуживать любовь и не умеет принимать, не отплатив. Она помогает разрешить себе получать заботу, тёплые слова и помощь просто так. Спокойное ведение учит принимать, не бросаясь тут же отдавать взамен.',
   },
@@ -200,7 +202,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/snyat-trevogu.wav', // ЗАГЛУШКА. Целевой: audio/otnosheniya-bezopasnaya-blizost.mp3
+    file: 'audio/otnosheniya-bezopasnaya-blizost.m4a',
+    cover: 'covers/otnosheniya-bezopasnaya-blizost.png',
     note: 'Тематическая. Подпускать ближе в своём темпе.',
     about: 'Эта медитация для тех, кто держит людей на расстоянии, потому что близость когда-то обернулась болью. Она помогает подпускать ближе маленькими шагами, в своём темпе, когда контроль остаётся у тебя. Так близость постепенно перестаёт ощущаться угрозой.',
   },
