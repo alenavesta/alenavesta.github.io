@@ -786,26 +786,65 @@ async function installApp() {
   }
 }
 
-// Карточка установки: кнопка (если браузер умеет), иначе короткая инструкция.
+// Тап по кнопке «Установить приложение». Если браузер отдал системное окно установки
+// (Chrome) — показываем его. Иначе (Mi Браузер, Safari и т.п. системного окна нет) —
+// открываем понятную пошаговую инструкцию под конкретный браузер.
+function installClick() {
+  if (installPrompt) {
+    installApp();
+  } else {
+    openInstallHelp();
+  }
+}
+
+// Инструкция «как поставить на телефон» в модалке — по браузеру пользователя.
+function openInstallHelp() {
+  const ua = navigator.userAgent;
+  const ios = /iPhone|iPad|iPod/.test(ua);
+  const isMi = /MiuiBrowser/i.test(ua);
+  let steps;
+  if (ios) {
+    steps = `
+      <ol class="install-steps">
+        <li>Внизу Safari нажми <b>«Поделиться»</b> — квадрат со стрелкой ↑.</li>
+        <li>Пролистай и выбери <b>«На экран „Домой“»</b>.</li>
+        <li>Нажми <b>«Добавить»</b> — иконка появится на экране.</li>
+      </ol>`;
+  } else if (isMi) {
+    steps = `
+      <ol class="install-steps">
+        <li>Внизу справа нажми кнопку меню <b>☰</b> (три полоски).</li>
+        <li>Выбери <b>«Добавить на рабочий стол»</b> (или «Добавить на главный экран»).</li>
+        <li>Подтверди — иконка появится на экране.</li>
+      </ol>
+      <p class="dim small" style="margin-top:14px">Чтобы приложение открывалось на весь экран, без строки браузера — открой этот же адрес в <b>Google Chrome</b> и там нажми меню ⋮ → <b>«Установить приложение»</b>.</p>`;
+  } else {
+    steps = `
+      <ol class="install-steps">
+        <li>Открой меню браузера — <b>⋮</b> вверху справа.</li>
+        <li>Выбери <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.</li>
+        <li>Подтверди — иконка появится на экране.</li>
+      </ol>`;
+  }
+  document.getElementById('modal-body').innerHTML = `
+    <h2>Установить приложение</h2>
+    <p class="dim small" style="margin-top:8px">Иконка на главном экране — запуск в одно касание, как обычное приложение.</p>
+    ${steps}`;
+  const modal = document.getElementById('modal');
+  const wasOpen = modal.classList.contains('open');
+  modal.classList.add('open');
+  // Модалка — «шаг» в истории: свайп назад закроет её, а не приложение (как у paywall).
+  if (!wasOpen) history.pushState({ layer: 'modal', screen }, '');
+}
+
+// Карточка установки: кнопка есть всегда (пока приложение не установлено).
+// Системное окно установки не у всех браузеров — тогда кнопка открывает инструкцию (installClick).
 function installCard() {
   if (isInstalled()) return '';
-  if (installPrompt) {
-    return `
-      <div class="card soft">
-        <p class="dim small">Поставь приложение на телефон: иконка на главном экране, запуск в одно касание.</p>
-        <button class="btn" onclick="installApp()">Установить приложение</button>
-      </div>`;
-  }
-  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  if (ios) {
-    return `
-      <div class="card soft">
-        <p class="dim small">Установить на iPhone: внизу Safari нажми «Поделиться» (квадрат со стрелкой) → «На экран “Домой”».</p>
-      </div>`;
-  }
   return `
     <div class="card soft">
-      <p class="dim small">Чтобы установить приложение, открой этот адрес в браузере Chrome — там появится кнопка установки. Или в меню браузера выбери «Добавить на главный экран».</p>
+      <p class="dim small">Поставь приложение на телефон: иконка на главном экране, запуск в одно касание.</p>
+      <button class="btn" onclick="installClick()">Установить приложение</button>
     </div>`;
 }
 

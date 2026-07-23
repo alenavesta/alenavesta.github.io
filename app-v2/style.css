@@ -830,3 +830,14 @@ ul.recognize li::before { content: '•'; position: absolute; left: 4px; color: 
   padding: 8px;
   cursor: pointer;
 }
+
+/* Пошаговая инструкция установки (в модалке). Свой padding — глобальный reset обнуляет списки. */
+.install-steps {
+  margin: 16px 0 0;
+  padding-left: 24px;
+  list-style: decimal;
+  color: var(--ink-dim);
+  font-size: 14.5px;
+}
+.install-steps li { margin-bottom: 10px; line-height: 1.5; }
+.install-steps b { color: var(--ink); font-weight: 600; }
