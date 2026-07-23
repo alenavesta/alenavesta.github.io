@@ -5,7 +5,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v34'; // v34: кнопка «Установить приложение» всегда видна в «Доступе» + пошаговая инструкция под браузер
+const SHELL_CACHE = 'av-shell-v35'; // v35: реальные записи ветки «Здоровье» (аудио + фото вместо заглушек)
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
 const SHELL = [
@@ -31,6 +31,9 @@ const SHELL = [
   './covers/dengi-razreshit-sebe-bolshe.png',
   './covers/dengi-bez-viny.png',
   './covers/dengi-spokoynye-dengi.png',
+  './covers/zdorovie-prinyat-telo.png',
+  './covers/zdorovie-otpustit-obidy.png',
+  './covers/zdorovie-doveryat-telu.png',
   './legal/legal.css',
   './legal/privacy.html',
   './legal/oferta.html',

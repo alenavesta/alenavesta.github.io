@@ -140,7 +140,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/vernut-pokoy.wav', // ЗАГЛУШКА. Целевой: audio/zdorovie-prinyat-telo.mp3
+    file: 'audio/zdorovie-prinyat-telo.m4a',
+    cover: 'covers/zdorovie-prinyat-telo.png',
     note: 'Тематическая. Закончить войну с телом.',
     about: 'Эта медитация для тех, кто привык видеть в теле недостатки и вести с ним внутреннюю борьбу. Она помогает закончить этот спор и почувствовать, что тело всё это время было на твоей стороне. Мягкое ведение возвращает к телу тепло вместо претензий.',
   },
@@ -151,7 +152,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/otpustit-den.wav', // ЗАГЛУШКА. Целевой: audio/zdorovie-otpustit-obidy.mp3
+    file: 'audio/zdorovie-otpustit-obidy.m4a',
+    cover: 'covers/zdorovie-otpustit-obidy.png',
     note: 'Тематическая. Снять груз старых обид с тела.',
     about: 'Эта медитация для тех, кто привык всё терпеть и складывать невысказанное внутрь, пока тело носит это напряжением и зажимами. Она помогает заметить старые обиды и мягко снять этот груз с себя, не заставляя прощать через силу. Спокойное дыхание освобождает то, что копилось годами.',
   },
@@ -162,7 +164,8 @@ const TRACKS = {
     category: 'meditacii',
     duration: '~10–12 мин',
     media: 'audio',
-    file: 'audio/snyat-trevogu.wav', // ЗАГЛУШКА. Целевой: audio/zdorovie-doveryat-telu.mp3
+    file: 'audio/zdorovie-doveryat-telu.m4a',
+    cover: 'covers/zdorovie-doveryat-telu.png',
     note: 'Тематическая. Выйти из режима ожидания болезни.',
     about: 'Эта медитация для тех, кто живёт в ожидании, что тело вот-вот подведёт, и прислушивается к каждому симптому с тревогой. Она помогает выйти из режима постоянной проверки себя и вернуть телу доверие. Голос спокойно ведёт через дыхание и ощущения, чтобы напряжение ожидания беды начало отпускать.',
   },
