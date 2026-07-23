@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d1420">
+<meta name="color-scheme" content="dark">
 <title>Практики Алёны Весты — наборы медитаций от 490 ₽</title>
 <meta name="description" content="Аудио-практики, которые переписывают корневое убеждение под симптомом. Психология, а не магия. Наборы от 490 ₽.">
 <style>
@@ -38,9 +40,10 @@
     position: fixed;
     inset: 0;
     z-index: -1;
-    background:
-      linear-gradient(rgba(13, 20, 32, 0.55), rgba(13, 20, 32, 0.55)),
-      var(--bg) url('bg.svg') center / cover no-repeat;
+    /* Один слой «цвет + картинка» (как в app-v2 и full.html): многослойный фон с
+       linear-gradient встроенный браузер Xiaomi/Mi отрисовывал серым. Затемнение уже
+       вшито в сам bg.svg (тёмная подложка #0d1420), поэтому overlay-градиент не нужен. */
+    background: var(--bg) url('bg.svg') center / cover no-repeat;
   }
 
   .col {
