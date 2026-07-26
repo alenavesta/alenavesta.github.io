@@ -5,7 +5,7 @@
 
 // ВАЖНО: при любом изменении файлов оболочки (html/css/js) бампать номер версии ниже —
 // именно смена sw.js запускает автообновление на телефонах (см. app.js, блок «Автообновление»).
-const SHELL_CACHE = 'av-shell-v39'; // v39: реальные записи ветки «Отношения» (аудио стерео + фото вместо заглушек)
+const SHELL_CACHE = 'av-shell-v40'; // v40: реальные записи дневных медитаций (аудио стерео + фото вместо заглушек-wav)
 const AUDIO_CACHE = 'av-audio-v2';  // кэш медитаций, переживает бампы оболочки (см. activate)
 
 const SHELL = [
@@ -37,6 +37,9 @@ const SHELL = [
   './covers/otnosheniya-prostit-sebya.png',
   './covers/otnosheniya-pravo-poluchat.png',
   './covers/otnosheniya-bezopasnaya-blizost.png',
+  './covers/snyat-trevogu.png',
+  './covers/perezagruzka.png',
+  './covers/vernut-pokoy.png',
   './legal/legal.css',
   './legal/privacy.html',
   './legal/oferta.html',
