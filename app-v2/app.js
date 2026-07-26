@@ -323,8 +323,10 @@ function play(trackId) {
   document.getElementById('player').classList.toggle('video-mode', isVideo);
   media.src = t.file;
   startPlayback(media, isVideo);
-  // Трек стримится из сети с мгновенным стартом; service worker докэширует В КЭШ только этот
-  // запущенный файл (см. sw.js respondAudio) — со второго раза и офлайн играет из кэша.
+  // Трек стримится из сети с мгновенным стартом. Параллельно сохраняем его в кэш ИЗ СТРАНИЦЫ
+  // (saveForOffline) — со второго раза и офлайн играет из кэша. Раньше докэшировал сам SW в фоне,
+  // но телефон убивал воркер на середине большой загрузки; страница живёт пока идёт прослушивание.
+  if (!isVideo) saveForOffline(t.file);
   setMediaSession(t);
   openPlayer(t);
   // Плеер живёт на вкладке «Сегодня». Запуск из «Программы»/«Библиотеки» переключает туда.
@@ -335,6 +337,34 @@ function play(trackId) {
   }
   render();
   window.scrollTo(0, 0);
+}
+
+// Сохранение медитации в кэш для офлайна — из страницы, а не из service worker. SW на телефоне
+// живёт недолго: систему может выгрузить его вскоре после ответа, и фоновая докачка большого файла
+// обрывается. Страница же жива, пока человек слушает, поэтому полная загрузка успевает завершиться.
+// Имя аудио-кэша НЕ хардкодим — берём текущий av-audio-* (его создаёт SW), чтобы не рассинхрониться
+// при бампе версии в sw.js. Кэш переживает обновления оболочки — сохранённое остаётся.
+const _savingOffline = new Set();
+async function saveForOffline(file) {
+  if (!('caches' in window) || _savingOffline.has(file)) return;
+  _savingOffline.add(file);
+  try {
+    const url = new URL(file, location.href).href;
+    const keys = await caches.keys();
+    const name = keys.find((k) => k.startsWith('av-audio-')) || 'av-audio-v4';
+    const cache = await caches.open(name);
+    if (await cache.match(url)) return; // уже сохранён — второй раз не качаем
+    // Пауза: сначала даём плееру набрать буфер и стартовать, потом тянем полный файл в кэш,
+    // чтобы загрузка не конкурировала со стримом за канал в первые секунды.
+    await new Promise((r) => setTimeout(r, 4000));
+    if (await cache.match(url)) return; // мог сохраниться, пока ждали
+    const res = await fetch(url); // без Range → полный файл 200 (через SW из сети)
+    if (res && res.ok && res.status === 200) await cache.put(url, res.clone());
+  } catch (e) {
+    /* нет доступа к CacheStorage или обрыв сети — не критично, повторим при следующем запуске */
+  } finally {
+    _savingOffline.delete(file);
+  }
 }
 
 // Аккуратный старт воспроизведения. play() часто отклоняется, пока ничего ещё не буферизовано —
