@@ -14,6 +14,7 @@ const MEDIA_BASE = 'https://github.com/alenavesta/alenavesta.github.io/releases/
 const TRACKS = {
   mini: {
     id: 'mini',
+    theme: 'son',
     title: 'Уснуть за 10 минут',
     type: 'медитация',
     category: 'meditacii',
@@ -26,6 +27,7 @@ const TRACKS = {
   },
   otpustit: {
     id: 'otpustit',
+    theme: 'son',
     title: 'Отпустить день',
     type: 'медитация',
     category: 'meditacii',
@@ -38,6 +40,7 @@ const TRACKS = {
   },
   tihiy_um: {
     id: 'tihiy_um',
+    theme: 'son',
     title: 'Тихий ум',
     type: 'медитация',
     category: 'meditacii',
@@ -50,6 +53,7 @@ const TRACKS = {
   },
   glubokiy_son: {
     id: 'glubokiy_son',
+    theme: 'son',
     title: 'Глубокий сон',
     type: 'медитация',
     category: 'meditacii',
@@ -62,6 +66,7 @@ const TRACKS = {
   },
   spokoynoe_zavtra: {
     id: 'spokoynoe_zavtra',
+    theme: 'son',
     title: 'Спокойное завтра',
     type: 'медитация',
     category: 'meditacii',
@@ -74,6 +79,7 @@ const TRACKS = {
   },
   legkoe_utro: {
     id: 'legkoe_utro',
+    theme: 'son',
     title: 'Лёгкое утро',
     type: 'медитация',
     category: 'meditacii',
@@ -86,6 +92,7 @@ const TRACKS = {
   },
   moy_novyy_son: {
     id: 'moy_novyy_son',
+    theme: 'son',
     title: 'Мой новый сон',
     type: 'медитация',
     category: 'meditacii',
@@ -98,6 +105,7 @@ const TRACKS = {
   },
   snyat_trevogu: {
     id: 'snyat_trevogu',
+    theme: 'son',
     title: 'Снять тревогу за 10 минут',
     type: 'медитация',
     category: 'meditacii',
@@ -110,6 +118,7 @@ const TRACKS = {
   },
   perezagruzka: {
     id: 'perezagruzka',
+    theme: 'son',
     title: 'Перезагрузка среди дня',
     type: 'медитация',
     category: 'meditacii',
@@ -122,6 +131,7 @@ const TRACKS = {
   },
   vernut_pokoy: {
     id: 'vernut_pokoy',
+    theme: 'son',
     title: 'Вернуть себе покой',
     type: 'медитация',
     category: 'meditacii',
@@ -138,6 +148,7 @@ const TRACKS = {
   // Перед запуском заменить на реальные записи (Руслан, CapCut) по целевым именам в комментариях. ---
   z_prinyat_telo: {
     id: 'z_prinyat_telo',
+    theme: 'zdorovie',
     title: 'Принять своё тело',
     type: 'медитация',
     category: 'meditacii',
@@ -150,6 +161,7 @@ const TRACKS = {
   },
   z_otpustit_obidy: {
     id: 'z_otpustit_obidy',
+    theme: 'zdorovie',
     title: 'Отпустить обиды',
     type: 'медитация',
     category: 'meditacii',
@@ -162,6 +174,7 @@ const TRACKS = {
   },
   z_doveryat_telu: {
     id: 'z_doveryat_telu',
+    theme: 'zdorovie',
     title: 'Доверять своему телу',
     type: 'медитация',
     category: 'meditacii',
@@ -176,6 +189,7 @@ const TRACKS = {
   // --- Тематические медитации ветки «Отношения» (2026-07-20, тексты nabory/teksty-temy/). file — заглушка до записи (Руслан, CapCut). ---
   o_prostit_sebya: {
     id: 'o_prostit_sebya',
+    theme: 'otnosheniya',
     title: 'Простить себя',
     type: 'медитация',
     category: 'meditacii',
@@ -188,6 +202,7 @@ const TRACKS = {
   },
   o_pravo_poluchat: {
     id: 'o_pravo_poluchat',
+    theme: 'otnosheniya',
     title: 'Право получать',
     type: 'медитация',
     category: 'meditacii',
@@ -200,6 +215,7 @@ const TRACKS = {
   },
   o_bezopasnaya_blizost: {
     id: 'o_bezopasnaya_blizost',
+    theme: 'otnosheniya',
     title: 'Безопасная близость',
     type: 'медитация',
     category: 'meditacii',
@@ -214,6 +230,7 @@ const TRACKS = {
   // --- Тематические медитации ветки «Деньги» (2026-07-20, тексты nabory/teksty-temy/). file — заглушка до записи (Руслан, CapCut). ---
   d_razreshit_bolshe: {
     id: 'd_razreshit_bolshe',
+    theme: 'dengi',
     title: 'Разрешить себе больше',
     type: 'медитация',
     category: 'meditacii',
@@ -226,6 +243,7 @@ const TRACKS = {
   },
   d_dengi_bez_viny: {
     id: 'd_dengi_bez_viny',
+    theme: 'dengi',
     title: 'Деньги без вины',
     type: 'медитация',
     category: 'meditacii',
@@ -238,6 +256,7 @@ const TRACKS = {
   },
   d_spokoynye_dengi: {
     id: 'd_spokoynye_dengi',
+    theme: 'dengi',
     title: 'Спокойные деньги',
     type: 'медитация',
     category: 'meditacii',
@@ -392,7 +411,7 @@ const TRACKS = {
     category: 'praktiki',
     duration: '~17 мин',
     media: 'audio',
-    file: 'audio/dyhanie-energiya.mp3',
+    file: 'audio/dyhanie-energiya.m4a',
     note: 'Гипнодыхание. Наполниться энергией и бодростью.',
     about: 'Дыхательная практика для тех, кто чувствует упадок сил и хочет вернуть себе бодрость. Дыхание в сочетании с голосовым ведением помогает наполнить тело энергией и выйти из вялого, заторможенного состояния.',
   },
@@ -403,7 +422,7 @@ const TRACKS = {
     category: 'praktiki',
     duration: '~16 мин',
     media: 'audio',
-    file: 'audio/dyhanie-kletochnoe.mp3',
+    file: 'audio/dyhanie-kletochnoe.m4a',
     note: 'Гипнодыхание. Глубокое насыщение тела кислородом.',
     about: 'Практика глубокого дыхания для тех, кто хочет лучше почувствовать своё тело и напитать его кислородом на клеточном уровне. Помогает снять телесное напряжение и ощутить прилив свежести.',
   },
@@ -414,7 +433,7 @@ const TRACKS = {
     category: 'praktiki',
     duration: '~22 мин',
     media: 'audio',
-    file: 'audio/dyhanie-snyat-trevozhnost.mp3',
+    file: 'audio/dyhanie-snyat-trevozhnost.m4a',
     note: 'Гипнодыхание. Снизить тревогу через дыхание.',
     about: 'Дыхательная практика для тех, кого не отпускает внутреннее беспокойство. Ритмичное дыхание с голосовым ведением помогает снизить тревогу и вернуть ощущение опоры и спокойствия.',
   },
@@ -436,7 +455,7 @@ const TRACKS = {
     category: 'praktiki',
     duration: '~14 мин',
     media: 'audio',
-    file: 'audio/dyhanie-utrenee.mp3',
+    file: 'audio/dyhanie-utrenee.m4a',
     note: 'Гипнодыхание с музыкой. Мягко проснуться и настроиться на день.',
     about: 'Утренняя дыхательная практика под музыку для тех, кто просыпается тяжело и не сразу включается в день. Помогает мягко разбудить тело и настроиться на день заранее, ещё до того, как встал с постели.',
   },
@@ -447,7 +466,7 @@ const TRACKS = {
     category: 'praktiki',
     duration: '~22 мин',
     media: 'audio',
-    file: 'audio/dyhanie-zdorovie.mp3',
+    file: 'audio/dyhanie-zdorovie.m4a',
     note: 'Гипнодыхание. Настроить тело на восстановление.',
     about: 'Дыхательная практика для тех, кто хочет поддержать своё тело и его естественные силы восстановления. Голосовое ведение и дыхание помогают снять напряжение и настроиться на здоровье.',
   },
@@ -458,6 +477,16 @@ const CATEGORIES = [
   { id: 'meditacii', title: 'Медитации' },
   { id: 'subliminaly', title: 'Сублиминалы' },
   { id: 'praktiki', title: 'Практики', empty: 'Практики скоро появятся здесь.' },
+];
+
+// Медитации в Библиотеке разбиты на 4 темы (по полю track.theme). Порядок = порядок разделов.
+// Новая медитация: добавь ей theme: 'son'|'zdorovie'|'otnosheniya'|'dengi' — иначе попадёт в «Сон»
+// (см. renderLibrary: медитации без известной темы уходят в первый раздел, чтобы не пропасть).
+const MED_THEMES = [
+  { id: 'son', title: '😴 Сон' },
+  { id: 'zdorovie', title: '🌿 Здоровье' },
+  { id: 'otnosheniya', title: '❤️ Отношения' },
+  { id: 'dengi', title: '💰 Деньги' },
 ];
 
 // Тарифы. Бесплатного уровня нет: до оплаты всё под замком, доступен только квиз.

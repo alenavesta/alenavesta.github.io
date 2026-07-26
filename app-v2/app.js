@@ -1071,21 +1071,40 @@ function renderProgram() {
     }`;
 }
 
-function renderLibrary() {
-  let html = `<div class="eyebrow">Библиотека</div><h1>Все практики</h1>`;
-  for (const cat of CATEGORIES) {
-    const ids = Object.keys(TRACKS).filter((id) => TRACKS[id].category === cat.id);
-    const open = openCats.has(cat.id);
-    html += `
-      <button class="cat-head" onclick="toggleCat('${cat.id}')">
-        <span>${esc(cat.title)}</span>
+// Один сворачиваемый раздел библиотеки: шапка + (если открыт) список треков.
+function libSection(id, title, ids, empty) {
+  const open = openCats.has(id);
+  let html = `
+      <button class="cat-head" onclick="toggleCat('${id}')">
+        <span>${esc(title)}</span>
         <span class="cat-meta">${ids.length ? ids.length : ''} ${open ? '▴' : '▾'}</span>
       </button>`;
-    if (open) {
-      html += ids.length
-        ? ids.map((id) => trackRow(TRACKS[id], { showAbout: true })).join('')
-        : `<p class="dim small" style="padding:8px 4px 4px">${esc(cat.empty || 'Скоро появится.')}</p>`;
-    }
+  if (open) {
+    html += ids.length
+      ? ids.map((tid) => trackRow(TRACKS[tid], { showAbout: true })).join('')
+      : `<p class="dim small" style="padding:8px 4px 4px">${esc(empty || 'Скоро появится.')}</p>`;
+  }
+  return html;
+}
+
+function renderLibrary() {
+  let html = `<div class="eyebrow">Библиотека</div><h1>Все практики</h1>`;
+  // Медитации — по 4 темам (track.theme). Тему без явного совпадения (или без поля theme)
+  // считаем «Сон» (первый раздел), чтобы ни один трек не пропал из библиотеки.
+  const medIds = Object.keys(TRACKS).filter((id) => TRACKS[id].category === 'meditacii');
+  const known = new Set(MED_THEMES.map((t) => t.id));
+  for (const th of MED_THEMES) {
+    const ids = medIds.filter((id) => {
+      const tt = TRACKS[id].theme;
+      return tt === th.id || (th.id === 'son' && !known.has(tt));
+    });
+    html += libSection(th.id, th.title, ids);
+  }
+  // Остальные категории (сублиминалы, практики) — как раньше, отдельными разделами.
+  for (const cat of CATEGORIES) {
+    if (cat.id === 'meditacii') continue; // медитации уже разложены по темам выше
+    const ids = Object.keys(TRACKS).filter((id) => TRACKS[id].category === cat.id);
+    html += libSection(cat.id, cat.title, ids, cat.empty);
   }
   // Скрытые VIP-разделы — видны только автору (level vip) и только когда каталог загружен.
   // Названия и состав берём из каталога, чтобы в публичном коде приложения их не было.
@@ -1296,8 +1315,11 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('sw.js')
     .then((reg) => {
-      // Проверяем новую версию при каждом возвращении в приложение и раз в час.
+      // Проверяем новую версию: сразу при старте, при каждом возвращении в приложение и раз в минуту.
+      // Сразу при старте — чтобы после деплоя не ждать до следующего сворачивания/часа (у sw.js на
+      // GitHub Pages свой HTTP-кэш ~10 мин, раньше этого новая версия всё равно не появится).
       const checkUpdate = () => reg.update().catch(() => {});
+      checkUpdate();
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           checkUpdate();
@@ -1305,7 +1327,7 @@ if ('serviceWorker' in navigator) {
           offerUpdate();
         }
       });
-      setInterval(checkUpdate, 60 * 60 * 1000);
+      setInterval(checkUpdate, 60 * 1000);
     })
     .catch(() => {});
 
