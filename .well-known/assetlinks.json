@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.alenavesta.twa",
+        "sha256_cert_fingerprints": ["0F:86:65:EC:B3:A8:40:9F:7E:ED:1F:99:34:02:02:CB:8B:EC:A0:25:45:A8:C2:2E:E2:8A:F8:AC:FB:98:BC:02"]
+      }
+    }]
