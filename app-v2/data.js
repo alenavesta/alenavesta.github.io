@@ -12,6 +12,23 @@
 const MEDIA_BASE = 'https://github.com/alenavesta/alenavesta.github.io/releases/download/media-v1/';
 
 const TRACKS = {
+  // Пробная медитация в подарок за прохождение теста. free:true → играет бесплатно у всех,
+  // включая уровень none (до оплаты). Универсальна для всех 4 веток квиза; из библиотеки
+  // выведена отдельным блоком (см. renderLibrary), в тематические разделы не попадает.
+  podarok: {
+    id: 'podarok',
+    theme: 'son',
+    free: true,
+    title: 'Медитация для внутреннего спокойствия',
+    type: 'медитация',
+    category: 'meditacii',
+    duration: '~4 мин',
+    media: 'audio',
+    file: 'audio/podarok-besplatnaya-meditaciya.m4a',
+    cover: 'covers/podarok-besplatnaya-meditaciya.png',
+    note: 'Твоя бесплатная практика. Включи и просто слушай.',
+    about: 'Медитация в подарок за то, что прошла тест. Её можно слушать бесплатно и сколько угодно раз — это первый шаг, чтобы почувствовать, как работают практики. Включи в спокойный момент, надень наушники и просто следуй за голосом.',
+  },
   mini: {
     id: 'mini',
     theme: 'son',

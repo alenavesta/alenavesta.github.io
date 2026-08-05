@@ -42,6 +42,8 @@ function recommendedIds() {
 }
 
 function hasAccess(trackId) {
+  const t = TRACKS[trackId];
+  if (t && t.free) return true; // пробная медитация в подарок — бесплатна всем, даже до оплаты (none)
   if (level() === 'vip') return true; // приватный уровень автора — открыто всё, включая скрытый курс
   if (level() === 'full') return true;
   if (level() === 'my') return recommendedIds().includes(trackId);
@@ -248,6 +250,7 @@ function renderQuizResult() {
         ${p(insert.close)}
         ${result.legal ? `<p class="legal">${esc(result.legal)}</p>` : ''}
       </div>
+      ${freeMeditationBlock()}
       ${renderOffer(result)}
       ${
         level() === 'my'
@@ -255,6 +258,18 @@ function renderQuizResult() {
           : `<button class="restart" onclick="quizStart()">Пройти тест ещё раз</button>`
       }
     </div>`;
+}
+
+// Пробная медитация в подарок за прохождение теста. Универсальна для всех веток, бесплатна
+// (флаг free → hasAccess пускает всех), играет без замка. Показывается на результате квиза
+// и на «Сегодня» для непокупателей — первый реальный опыт продукта перед покупкой набора.
+function freeMeditationBlock() {
+  const ids = Object.keys(TRACKS).filter((id) => TRACKS[id].free);
+  if (!ids.length) return '';
+  return `
+    <div class="eyebrow" style="margin-top:26px">🎁 Подарок за прохождение теста</div>
+    <p class="dim small" style="margin-top:4px">Эту медитацию можно слушать бесплатно, сколько захочешь. Попробуй прямо сейчас — а набор под твой результат откроется после оплаты.</p>
+    ${ids.map((id) => trackRow(TRACKS[id], { showAbout: true })).join('')}`;
 }
 
 // Оффер под результатом: набор из 5 практик + тарифы + честный FOMO.
@@ -1030,6 +1045,7 @@ function renderToday() {
         <p class="dim small" style="margin-top:8px">${esc(insert.lead)}</p>
         <button class="btn ghost" onclick="go('quiz')">Смотреть результат полностью</button>
       </div>
+      ${freeMeditationBlock()}
       ${renderOffer(QUIZ_BRANCHES[q.branch].result)}`;
   }
 
@@ -1119,9 +1135,13 @@ function libSection(id, title, ids, empty) {
 
 function renderLibrary() {
   let html = `<div class="eyebrow">Библиотека</div><h1>Все практики</h1>`;
+  // Бесплатная медитация в подарок — отдельным блоком сверху, играбельна у всех (флаг free).
+  const freeIds = Object.keys(TRACKS).filter((id) => TRACKS[id].free);
+  if (freeIds.length) html += libSection('podarok', '🎁 Бесплатная медитация', freeIds);
   // Медитации — по 4 темам (track.theme). Тему без явного совпадения (или без поля theme)
   // считаем «Сон» (первый раздел), чтобы ни один трек не пропал из библиотеки.
-  const medIds = Object.keys(TRACKS).filter((id) => TRACKS[id].category === 'meditacii');
+  // Подарочную (free) исключаем — она уже показана отдельным блоком выше.
+  const medIds = Object.keys(TRACKS).filter((id) => TRACKS[id].category === 'meditacii' && !TRACKS[id].free);
   const known = new Set(MED_THEMES.map((t) => t.id));
   for (const th of MED_THEMES) {
     const ids = medIds.filter((id) => {
